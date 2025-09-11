@@ -27,7 +27,7 @@
 		"svelte-confetti": "^2.3.1",
 		"typescript": "^5.8.2",
 		"vite": "^5.4.17",
-		"wrangler": "^3.114.4"
+		"wrangler": "^4.35.0"
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.482.0",
