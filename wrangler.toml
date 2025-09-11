@@ -1,7 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "our-wedding-invitation"
 compatibility_date = "2024-11-27"
-pages_build_output_dir = ".svelte-kit/cloudflare"
+#pages_build_output_dir = ".svelte-kit/cloudflare"
 compatibility_flags = ["nodejs_compat"]
 
 # Automatically place your workloads in an optimal location to minimize latency.
