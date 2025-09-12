@@ -10,14 +10,24 @@
 	let { form } = $props();
 
 	let rsvp = $state<'yes' | 'no' | null>(null);
+	let rsvpBus = $state<'yes' | 'no' | null>(null);
 	let submitting = $state(false);
+	let submittingBus = $state(false);
 
-	function clearValidationMessage(formInput: 'name' | 'rsvp') {
+	function clearValidationMessage(formInput: 'name' | 'rsvp' | 'name_b' | 'rsvp_b') {
 		if (formInput === 'name' && form?.missingName) {
 			form = null;
 		}
 
 		if (formInput === 'rsvp' && form?.missingRsvp) {
+			form = null;
+		}
+
+		if (formInput === 'name_b' && form?.missingNameB) {
+			form = null;
+		}
+
+		if (formInput === 'rsvp_b' && form?.missingRsvpB) {
 			form = null;
 		}
 	}
@@ -92,8 +102,86 @@
 		{/if}
 	</div>
 
-	<div class="accordion-container">
+	<!--<div class="accordion-container">
 		<RsvpAccordion />
+	</div>-->
+</section>
+
+<!-- 탑승여부 섹션 -->
+<section class="rsvp rsvp-bus">
+	<div class="header">
+		<img class="header-deco" src={rsvpDeco} alt="rsvp header deco" />
+		<h2 class="title {localeStore.locale}">{$_('rsvp.title_b')}</h2>
+		<p class="sub-title {localeStore.locale}">
+			{$_('rsvp.reply_by_b')}
+		</p>
+	</div>
+
+	<form
+		class="rsvp-form"
+		method="POST"
+		action="?/rsvpBus"
+		use:enhance={({ formData }) => {
+			submittingBus = true;
+			formData.append('rsvp_b', rsvpBus ?? '');
+			return ({ update, result }) => {
+				update({}).finally(() => {
+					submittingBus = false;
+					if (result.status === 200) {
+						rsvpBus = null;
+					}
+				});
+			};
+		}}
+	>
+		<input
+			class="fullname {localeStore.locale}"
+			name="fullname_b"
+			value={form?.nameB ?? ''}
+			placeholder={$_('rsvp.fullname_placeholder_b')}
+			onfocus={() => clearValidationMessage('name_b')}
+		/>
+		<div class="select-container">
+			<RsvpSelect 
+				bind:rsvp={rsvpBus} 
+				clearForm={() => clearValidationMessage('rsvp_b')}
+				selectText={$_('rsvp.select_b.select_attendance_b')}
+				yesText={$_('rsvp.select_b.yes_b')}
+				noText={$_('rsvp.select_b.no_b')}
+			/>
+		</div>
+		<button class="send {localeStore.locale}" type="submit" disabled={submittingBus}>
+			{#if submittingBus}
+				<div class="spinning">
+					<LoaderCircle />
+				</div>
+			{:else}
+				{$_('rsvp.send_b')}
+			{/if}
+		</button>
+	</form>
+	
+	<div class="submit-message">
+		{#if form?.successB}
+			<p class="success {localeStore.locale}">
+				{$_('rsvp.email_success_b')}
+			</p>
+		{/if}
+		{#if form?.emailErrorB}
+			<p class="error {localeStore.locale}">
+				{$_('rsvp.email_error_b')}
+			</p>
+		{/if}
+		{#if form?.missingNameB}
+			<p class="error {localeStore.locale}">
+				{$_('rsvp.missing_name_error_b')}
+			</p>
+		{/if}
+		{#if form?.missingRsvpB}
+			<p class="error {localeStore.locale}">
+				{$_('rsvp.missing_rsvp_error_b')}
+			</p>
+		{/if}
 	</div>
 </section>
 

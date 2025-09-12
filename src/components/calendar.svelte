@@ -10,7 +10,7 @@
 </script>
 
 <section class="calendar">
-	<h2 class="title en">June</h2>
+	<h2 class="title en">Jan</h2>
 	<div class="calendar-content">
 		<img class="week-col" src={sundayCol} alt="sunday column" />
 		<img class="week-col" src={mondayCol} alt="monday column" />

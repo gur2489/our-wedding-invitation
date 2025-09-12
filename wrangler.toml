@@ -1,8 +1,13 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "our-wedding-invitation"
 compatibility_date = "2024-11-27"
-#pages_build_output_dir = ".svelte-kit/cloudflare"
+pages_build_output_dir = ".svelte-kit/cloudflare"
 compatibility_flags = ["nodejs_compat"]
+
+[env.production.vars]
+RESEND_API_KEY = "re_GfC2cZy8_94KhxmXAqrVX2Svf9Qccyjuz"
+PUBLIC_NAVER_MAPS_CLIENT_ID = "nu448cbszc"
+NAVER_MAPS_CLIENT_SECRET = "H4HXjW8YJjSKn0MMUu7Lzhetn8PogeiinfD2TFjA"
 
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Pages Function, running it closer to your back-end infrastructure
