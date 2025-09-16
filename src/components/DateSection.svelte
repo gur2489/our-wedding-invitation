@@ -4,36 +4,36 @@ import { onMount } from "svelte";
 let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 let isWeddingPassed = false;
 
-const weddingDate = new Date(2026, 1, 31, 15, 30); // 2026년 5월 16일 12:30
+const weddingDate = new Date(2026, 0, 31, 15, 30); 
 const year = weddingDate.getFullYear();
-const month = weddingDate.getMonth(); // 0-index → 4 = 5월
+const month = weddingDate.getMonth();
 const day = weddingDate.getDate();
 
   // 달력 만들기
     function generateCalendar() {
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDayOfWeek = firstDay.getDay();
-    const daysInMonth = lastDay.getDate();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDayOfWeek = firstDay.getDay();
+      const daysInMonth = lastDay.getDate();
 
-    const calendarDays = [];
+      const calendarDays = [];
 
-    // 빈 칸
-    for (let i = 0; i < startDayOfWeek; i++) {
-        calendarDays.push({ date: "", type: "empty" });
-    }
+      // 빈 칸
+      for (let i = 0; i < startDayOfWeek; i++) {
+          calendarDays.push({ date: "", type: "empty" });
+      }
 
-    // 날짜
-    for (let d = 1; d <= daysInMonth; d++) {
-        const dow = new Date(year, month, d).getDay();
-        let type = "day";
-        if (dow === 0) type = "sun";
-        if (dow === 6) type = "sat";
-        if (d === day) type = "wedding";
-        calendarDays.push({ date: d, type });
-    }
+      // 날짜
+      for (let d = 1; d <= daysInMonth; d++) {
+          const dow = new Date(year, month, d).getDay();
+          let type = "day";
+          if (dow === 0) type = "sun";
+          if (dow === 6) type = "sat";
+          if (d === day) type = "wedding";
+          calendarDays.push({ date: d, type });
+      }
 
-    return calendarDays;
+      return calendarDays;
     }
 
     let days = generateCalendar();
@@ -116,7 +116,7 @@ const day = weddingDate.getDate();
 
 
   <p class="wedding-date">
-    2026년 5월 16일 토요일 12시 30분
+    2026년 1월 31일 토요일 15시 30분
   </p>
 </section>
 

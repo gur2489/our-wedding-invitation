@@ -18,5 +18,5 @@
 <DateSection />
 <Account bgColor="beige" />
 <Gallery />
-<Calendar />
+<!--<Calendar />-->
 <Location />
