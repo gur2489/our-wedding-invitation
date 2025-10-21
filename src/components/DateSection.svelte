@@ -63,7 +63,7 @@ const day = weddingDate.getDate();
 </script>
 
 <section class="date-section">
-    <h2 class="title">일정</h2>
+    <h2 class="title kr">일정</h2>
 
     <div class="calendar-card">
         <div class="calendar-header">
@@ -93,30 +93,30 @@ const day = weddingDate.getDate();
 
 
     <div class="countdown">
-      <h3>결혼까지 남은 시간</h3>
       <div class="countdown-wrapper">
-        <div class="countdown-item">
-          <span class="value">{timeLeft.days}</span>
-          <span class="label">일</span>
+        <div class="countdown-item kr">
+          <span class="value kr">{timeLeft.days}</span>
+          <span class="label">days</span>
         </div>
-        <div class="countdown-item">
+        <div class="countdown-item kr">
           <span class="value">{timeLeft.hours.toString().padStart(2, "0")}</span>
-          <span class="label">시간</span>
+          <span class="label">hour</span>
         </div>
-        <div class="countdown-item">
-          <span class="value">{timeLeft.minutes.toString().padStart(2, "0")}</span>
-          <span class="label">분</span>
+        <div class="countdown-item kr">
+          <span class="value kr">{timeLeft.minutes.toString().padStart(2, "0")}</span>
+          <span class="label">min</span>
         </div>
-        <div class="countdown-item">
-          <span class="value">{timeLeft.seconds.toString().padStart(2, "0")}</span>
-          <span class="label">초</span>
+        <div class="countdown-item kr">
+          <span class="value kr">{timeLeft.seconds.toString().padStart(2, "0")}</span>
+          <span class="label">sec</span>
         </div>
       </div>
     </div>
 
 
   <p class="wedding-date">
-    2026년 1월 31일 토요일 15시 30분
+    2026년 1월 31일(토) | 오후 3시 30분<br />
+    <span style="color:#666">라온제나 강남 | 8층 플로렌스홀</span>
   </p>
 </section>
 
@@ -124,9 +124,11 @@ const day = weddingDate.getDate();
   .date-section {
     padding: 3rem 1.5rem;
     text-align: center;
-    background-color: #f8f6f2;
+    background-color: #faeef2;
     font-family: 'Noto Sans KR', sans-serif;
     color: #444;
+    max-width: 600px;
+    margin: auto;
   }
 
   .title {
@@ -134,16 +136,6 @@ const day = weddingDate.getDate();
     font-weight: 500;
     margin-bottom: 1.5rem;
     position: relative;
-  }
-
-  .title::after {
-    content: "";
-    display: block;
-    width: 6px;
-    height: 6px;
-    background: #c2a97d;
-    border-radius: 50%;
-    margin: 0.75rem auto 0;
   }
 
   .calendar-card {
@@ -213,13 +205,15 @@ const day = weddingDate.getDate();
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px;
   }
 
   .value {
     font-size: 2rem;
     font-weight: 600;
-    color: #c2a97d;
-    font-family: "Courier New", monospace;
+    color: #444;
   }
 
   .label {

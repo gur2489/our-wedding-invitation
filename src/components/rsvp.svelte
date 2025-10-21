@@ -3,191 +3,306 @@
 	import { localeStore } from '../i18n.svelte';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
-	import RsvpSelect from './rsvp-select.svelte';
 	import rsvpDeco from '$lib/assets/rsvp-deco.svg';
-	import RsvpAccordion from './rsvp-accordion.svelte';
 
 	let { form } = $props();
 
+	let showModal = $state(false);
+	let showBusModal = $state(false);
 	let rsvp = $state<'yes' | 'no' | null>(null);
 	let rsvpBus = $state<'yes' | 'no' | null>(null);
 	let submitting = $state(false);
 	let submittingBus = $state(false);
+	let formName = $state('');
+	let formNameBus = $state('');
 
-	function clearValidationMessage(formInput: 'name' | 'rsvp' | 'name_b' | 'rsvp_b') {
-		if (formInput === 'name' && form?.missingName) {
-			form = null;
-		}
+	function openModal() {
+		showModal = true;
+	}
 
-		if (formInput === 'rsvp' && form?.missingRsvp) {
-			form = null;
-		}
+	function closeModal() {
+		showModal = false;
+	}
 
-		if (formInput === 'name_b' && form?.missingNameB) {
-			form = null;
-		}
+	function openBusModal() {
+		showBusModal = true;
+	}
 
-		if (formInput === 'rsvp_b' && form?.missingRsvpB) {
-			form = null;
-		}
+	function closeBusModal() {
+		showBusModal = false;
+	}
+
+	function selectRsvp(option: 'yes' | 'no') {
+		rsvp = option;
+	}
+
+	function selectRsvpBus(option: 'yes' | 'no') {
+		rsvpBus = option;
 	}
 </script>
 
+<!-- 참석 여부 섹션 -->
 <section class="rsvp">
 	<div class="header">
-		<img class="header-deco" src={rsvpDeco} alt="rsvp header deco" />
-		<h2 class="title {localeStore.locale}">{$_('rsvp.title')}</h2>
-		<p class="sub-title {localeStore.locale}">
-			{$_('rsvp.reply_by')}
+		<div class="icon">👰</div>
+		<h2 class="title">참석 & 대절 버스 탑승 여부 회신</h2>
+		<p class="sub-title">
+			오는 부분을 귀하게 모실 수 있도록<br />
+			참석 의사를 전달 부탁드립니다.
 		</p>
 	</div>
 
-	<form
-		class="rsvp-form"
-		method="POST"
-		action="?/rsvp"
-		use:enhance={({ formData }) => {
-			submitting = true;
-			formData.append('rsvp', rsvp ?? '');
-			return ({ update, result }) => {
-				update({}).finally(() => {
-					submitting = false;
-					if (result.status === 200) {
-						rsvp = null;
-					}
-				});
-			};
-		}}
-	>
-		<input
-			class="fullname {localeStore.locale}"
-			name="fullname"
-			value={form?.name ?? ''}
-			placeholder={$_('rsvp.fullname_placeholder')}
-			onfocus={() => clearValidationMessage('name')}
-		/>
-		<div class="select-container">
-			<RsvpSelect bind:rsvp clearForm={() => clearValidationMessage('rsvp')} />
-		</div>
-		<button class="send {localeStore.locale}" type="submit" disabled={submitting}>
-			{#if submitting}
-				<div class="spinning">
-					<LoaderCircle />
-				</div>
-			{:else}
-				{$_('rsvp.send')}
-			{/if}
-		</button>
-	</form>
-	<div class="submit-message">
-		{#if form?.success}
-			<p class="success {localeStore.locale}">
-				{$_('rsvp.email_success')}
-			</p>
-		{/if}
-		{#if form?.emailError}
-			<p class="error {localeStore.locale}">
-				{$_('rsvp.email_error')}
-			</p>
-		{/if}
-		{#if form?.missingName}
-			<p class="error {localeStore.locale}">
-				{$_('rsvp.missing_name_error')}
-			</p>
-		{/if}
-		{#if form?.missingRsvp}
-			<p class="error {localeStore.locale}">
-				{$_('rsvp.missing_rsvp_error')}
-			</p>
-		{/if}
-	</div>
-
-	<!--<div class="accordion-container">
-		<RsvpAccordion />
-	</div>-->
+	<button class="open-modal-button" onclick={openModal}>
+		참석여부 전달하기
+	</button>
 </section>
 
-<!-- 탑승여부 섹션 -->
+<!-- 참석 여부 모달 -->
+{#if showModal}
+	<div class="modal-overlay" onclick={closeModal}>
+		<div class="modal-content" onclick={(e) => e.stopPropagation()}>
+			<div class="modal-header">
+				<h3 class="modal-title">참석 의사 전달</h3>
+				<button class="modal-close" onclick={closeModal}>×</button>
+			</div>
+
+			<form
+				class="rsvp-form"
+				method="POST"
+				action="?/rsvp"
+				use:enhance={({ formData }) => {
+					submitting = true;
+					formData.append('rsvp', rsvp ?? '');
+					return ({ update, result }) => {
+						update({}).finally(() => {
+							submitting = false;
+							if (result.status === 200) {
+								rsvp = null;
+								formName = '';
+								closeModal();
+							}
+						});
+					};
+				}}
+			>
+				<!-- 구분 -->
+				<div class="form-group">
+					<label class="form-label">구분</label>
+					<div class="button-group">
+						<button
+							type="button"
+							class="option-button"
+							class:active={rsvp === 'yes'}
+							onclick={() => selectRsvp('yes')}
+						>
+							신랑측
+						</button>
+						<button
+							type="button"
+							class="option-button"
+							class:active={rsvp === 'no'}
+							onclick={() => selectRsvp('no')}
+						>
+							신부측
+						</button>
+					</div>
+				</div>
+
+				<!-- 성함 -->
+				<div class="form-group">
+					<label class="form-label">성함</label>
+					<input
+						class="form-input"
+						name="fullname"
+						bind:value={formName}
+						placeholder=""
+					/>
+				</div>
+
+				<!-- 참석인원 -->
+				<div class="form-group">
+					<label class="form-label">참석인원</label>
+					<input
+						class="form-input"
+						type="text"
+						placeholder="본인 포함 총 참석인원"
+					/>
+				</div>
+
+				<!-- 동행인 -->
+				<div class="form-group">
+					<label class="form-label">동행인</label>
+					<input
+						class="form-input"
+						type="text"
+						placeholder="함께 오시는 분 성함"
+					/>
+				</div>
+
+				<!-- 식사여부 -->
+				<div class="form-group">
+					<label class="form-label">식사여부</label>
+					<div class="button-group">
+						<button type="button" class="option-button small">
+							예정
+						</button>
+						<button type="button" class="option-button small">
+							안함
+						</button>
+						<button type="button" class="option-button small">
+							미정
+						</button>
+					</div>
+				</div>
+
+				<button class="submit-button" type="submit" disabled={submitting}>
+					{#if submitting}
+						<div class="spinning">
+							<LoaderCircle />
+						</div>
+					{:else}
+						참석 의사 전달하기
+					{/if}
+				</button>
+			</form>
+
+			<div class="submit-message">
+				{#if form?.success}
+					<p class="success">전송이 완료되었습니다.</p>
+				{/if}
+				{#if form?.emailError}
+					<p class="error">전송에 실패했습니다.</p>
+				{/if}
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- 대절버스 탑승 여부 섹션 -->
 <section class="rsvp rsvp-bus">
 	<div class="header">
-		<img class="header-deco" src={rsvpDeco} alt="rsvp header deco" />
-		<h2 class="title {localeStore.locale}">{$_('rsvp.title_b')}</h2>
-		<p class="sub-title {localeStore.locale}">
-			{$_('rsvp.reply_by_b')}
+		<div class="icon">🚌</div>
+		<h2 class="title">대절 버스 탑승 여부</h2>
+		<p class="sub-title">
+			편안한 이동을 위해 대절 버스를<br />
+			준비했습니다. 탑승 의사를 전달해주세요.
 		</p>
 	</div>
 
-	<form
-		class="rsvp-form"
-		method="POST"
-		action="?/rsvpBus"
-		use:enhance={({ formData }) => {
-			submittingBus = true;
-			formData.append('rsvp_b', rsvpBus ?? '');
-			return ({ update, result }) => {
-				update({}).finally(() => {
-					submittingBus = false;
-					if (result.status === 200) {
-						rsvpBus = null;
-					}
-				});
-			};
-		}}
-	>
-		<input
-			class="fullname {localeStore.locale}"
-			name="fullname_b"
-			value={form?.nameB ?? ''}
-			placeholder={$_('rsvp.fullname_placeholder_b')}
-			onfocus={() => clearValidationMessage('name_b')}
-		/>
-		<div class="select-container">
-			<RsvpSelect 
-				bind:rsvp={rsvpBus} 
-				clearForm={() => clearValidationMessage('rsvp_b')}
-				selectText={$_('rsvp.select_b.select_attendance_b')}
-				yesText={$_('rsvp.select_b.yes_b')}
-				noText={$_('rsvp.select_b.no_b')}
-			/>
-		</div>
-		<button class="send {localeStore.locale}" type="submit" disabled={submittingBus}>
-			{#if submittingBus}
-				<div class="spinning">
-					<LoaderCircle />
-				</div>
-			{:else}
-				{$_('rsvp.send_b')}
-			{/if}
-		</button>
-	</form>
-	
-	<div class="submit-message">
-		{#if form?.successB}
-			<p class="success {localeStore.locale}">
-				{$_('rsvp.email_success_b')}
-			</p>
-		{/if}
-		{#if form?.emailErrorB}
-			<p class="error {localeStore.locale}">
-				{$_('rsvp.email_error_b')}
-			</p>
-		{/if}
-		{#if form?.missingNameB}
-			<p class="error {localeStore.locale}">
-				{$_('rsvp.missing_name_error_b')}
-			</p>
-		{/if}
-		{#if form?.missingRsvpB}
-			<p class="error {localeStore.locale}">
-				{$_('rsvp.missing_rsvp_error_b')}
-			</p>
-		{/if}
-	</div>
+	<button class="open-modal-button" onclick={openBusModal}>
+		탑승여부 전달하기
+	</button>
 </section>
+
+<!-- 대절버스 모달 -->
+{#if showBusModal}
+	<div class="modal-overlay" onclick={closeBusModal}>
+		<div class="modal-content" onclick={(e) => e.stopPropagation()}>
+			<div class="modal-header">
+				<h3 class="modal-title">대절 버스 탑승 여부</h3>
+				<button class="modal-close" onclick={closeBusModal}>×</button>
+			</div>
+
+			<form
+				class="rsvp-form"
+				method="POST"
+				action="?/rsvpBus"
+				use:enhance={({ formData }) => {
+					submittingBus = true;
+					formData.append('rsvp_b', rsvpBus ?? '');
+					return ({ update, result }) => {
+						update({}).finally(() => {
+							submittingBus = false;
+							if (result.status === 200) {
+								rsvpBus = null;
+								formNameBus = '';
+								closeBusModal();
+							}
+						});
+					};
+				}}
+			>
+				<!-- 구분 -->
+				<div class="form-group">
+					<label class="form-label">구분</label>
+					<div class="button-group">
+						<button
+							type="button"
+							class="option-button"
+							class:active={rsvpBus === 'yes'}
+							onclick={() => selectRsvpBus('yes')}
+						>
+							탑승
+						</button>
+						<button
+							type="button"
+							class="option-button"
+							class:active={rsvpBus === 'no'}
+							onclick={() => selectRsvpBus('no')}
+						>
+							개별이동
+						</button>
+					</div>
+				</div>
+
+				<!-- 성함 -->
+				<div class="form-group">
+					<label class="form-label">성함</label>
+					<input
+						class="form-input"
+						name="fullname_b"
+						bind:value={formNameBus}
+						placeholder=""
+					/>
+				</div>
+
+				<!-- 탑승인원 -->
+				<div class="form-group">
+					<label class="form-label">탑승인원</label>
+					<input
+						class="form-input"
+						type="text"
+						placeholder="본인 포함 총 탑승인원"
+					/>
+				</div>
+
+				<!-- 탑승위치 -->
+				<div class="form-group">
+					<label class="form-label">탑승위치</label>
+					<input
+						class="form-input"
+						type="text"
+						placeholder="탑승하실 위치를 입력해주세요"
+					/>
+				</div>
+
+				<button class="submit-button" type="submit" disabled={submittingBus}>
+					{#if submittingBus}
+						<div class="spinning">
+							<LoaderCircle />
+						</div>
+					{:else}
+						탑승 의사 전달하기
+					{/if}
+				</button>
+			</form>
+
+			<div class="submit-message">
+				{#if form?.successB}
+					<p class="success">전송이 완료되었습니다.</p>
+				{/if}
+				{#if form?.emailErrorB}
+					<p class="error">전송에 실패했습니다.</p>
+				{/if}
+			</div>
+		</div>
+	</div>
+{/if}
 
 <style lang="scss">
 	section.rsvp {
-		padding: 4.5em 3.5em;
+		padding: 1.5em 3.5em;
+		text-align: center;
 	}
 
 	.header {
@@ -196,92 +311,193 @@
 		align-items: center;
 	}
 
-	img.header-deco {
-		width: 4.5em;
-		margin-bottom: 0.8em;
+	.icon {
+		font-size: 3rem;
+		margin-bottom: 1.5rem;
 	}
 
 	h2.title {
-		color: $primary-color;
-
-		&.kr {
-			@extend .title-font-kr;
-			letter-spacing: 1px;
-		}
-
-		&.en {
-			@extend .title-font-en;
-			letter-spacing: 3px;
-		}
+		color: #333;
+		font-size: 1.1rem;
+		font-weight: 500;
+		margin-bottom: 1rem;
 	}
 
 	p.sub-title {
-		&.kr {
-			margin-top: 0.9em;
-			font-size: 0.9rem;
-		}
-
-		&.en {
-			margin-top: 0.5em;
-			font-size: 1.2rem;
-		}
+		font-size: 0.9rem;
+		color: #666;
+		line-height: 1.6;
+		margin-bottom: 2rem;
 	}
 
-	form.rsvp-form {
-		margin-top: 3em;
-	}
-
-	input.fullname {
-		padding: 0.4em 0.8em;
+	.open-modal-button {
+		background: white;
+		border: 1.5px solid #d4b896;
+		border-radius: 50px;
+		padding: 1rem 2rem;
+		cursor: pointer;
+		font-size: 1rem;
+		color: #333;
+		max-width: 26rem;
 		width: 100%;
-		border: 1px solid $white-2;
+		margin: 0 auto;
+		transition: all 0.2s ease;
+	}
+
+	.open-modal-button:hover {
+		background: #fdfcfb;
+		transform: translateY(-2px);
+	}
+
+	/* Modal Styles */
+	.modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+		padding: 1rem;
+	}
+
+	.modal-content {
+		background: white;
+		border-radius: 12px;
+		padding: 0;
+		max-width: 28rem;
+		width: 100%;
+		max-height: 85vh;
+		overflow-y: auto;
+		position: relative;
+	}
+
+	.modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1.5rem 1.5rem 1rem;
+		border-bottom: 1px solid #f0f0f0;
+	}
+
+	.modal-title {
+		font-size: 1.1rem;
+		font-weight: 500;
+		color: #333;
+		margin: 0;
+	}
+
+	.modal-close {
+		background: none;
+		border: none;
+		font-size: 2rem;
+		color: #999;
+		cursor: pointer;
+		padding: 0;
+		width: 2rem;
+		height: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		line-height: 1;
+	}
+
+	.modal-close:hover {
+		color: #333;
+	}
+
+	.rsvp-form {
+		padding: 1.5rem;
+	}
+
+	.form-group {
+		margin-bottom: 1.5rem;
+	}
+
+	.form-label {
+		display: block;
+		font-size: 0.9rem;
+		color: #333;
+		margin-bottom: 0.75rem;
+		font-weight: 500;
+		text-align: left;
+	}
+
+	.form-input {
+		width: 100%;
+		padding: 0.75rem;
+		border: 1px solid #e0e0e0;
 		border-radius: 4px;
-		letter-spacing: 0.02em;
-
-		&:active,
-		&:focus {
-			@extend .input-focused;
-		}
-		&::placeholder {
-			color: $font-color-light;
-		}
-		&.kr::placeholder {
-			font-size: 0.9rem;
-		}
+		font-size: 0.95rem;
+		background: #fafafa;
 	}
 
-	.select-container {
-		margin-top: 1em;
+	.form-input:focus {
+		outline: none;
+		border-color: #b8a789;
+		background: white;
 	}
 
-	button.send {
+	.form-input::placeholder {
+		color: #999;
+	}
+
+	.button-group {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.option-button {
+		flex: 1;
+		padding: 0.75rem;
+		border: 1px solid #e0e0e0;
+		border-radius: 4px;
+		background: white;
+		color: #666;
+		cursor: pointer;
+		font-size: 0.95rem;
+		transition: all 0.2s ease;
+	}
+
+	.option-button.small {
+		flex: 1;
+	}
+
+	.option-button.active {
+		background: #8fa9d4;
+		color: white;
+		border-color: #8fa9d4;
+	}
+
+	.option-button:hover:not(.active) {
+		background: #f5f5f5;
+	}
+
+	.submit-button {
+		width: 100%;
+		padding: 1rem;
+		background-color: #d4b896;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		font-size: 1rem;
+		cursor: pointer;
+		margin-top: 1rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-top: 3em;
-		height: 2.5em;
-		width: 100%;
-		background-color: $primary-color;
-		border-radius: 4px;
-		color: $white;
-		letter-spacing: 0.05em;
+	}
 
-		&[disabled] {
-			background-color: $primary-color-light;
-			cursor: not-allowed;
-		}
+	.submit-button:hover:not([disabled]) {
+		background-color: #c4a886;
+	}
 
-		&:active {
-			background-color: $primary-color-dark;
-		}
-
-		&.kr {
-			font-weight: 600;
-		}
-
-		&.en {
-			font-weight: 700;
-		}
+	.submit-button[disabled] {
+		background-color: #e5d5c0;
+		cursor: not-allowed;
 	}
 
 	@keyframes spin {
@@ -301,30 +517,18 @@
 	}
 
 	.submit-message {
-		margin-top: 0.5em;
-		height: 1.5em;
+		padding: 0 1.5rem 1.5rem;
+		min-height: 1.5rem;
+		text-align: center;
 
-		.kr {
+		p.success {
+			color: #4caf50;
 			font-size: 0.9rem;
 		}
 
-		.en {
-			font-size: 1.1rem;
-		}
-
-		p.success {
-			color: $green-1;
-		}
-
 		p.error {
-			color: $red-1;
+			color: #f44336;
+			font-size: 0.9rem;
 		}
-	}
-
-	.accordion-container {
-		margin-top: 2em;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
 	}
 </style>

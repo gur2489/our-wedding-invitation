@@ -8,6 +8,7 @@
 	import Location from '../components/location.svelte';
 	import type { PageProps } from './$types';
 	import Gallery from '../components/gallery.svelte';
+	import Info from '../components/info.svelte';
 
 	let { form }: PageProps = $props();
 </script>
@@ -15,8 +16,9 @@
 <Cover />
 <Letter />
 <Rsvp {form} />
+<Info />
+<Account />
 <DateSection />
-<Account bgColor="beige" />
 <Gallery />
 <!--<Calendar />-->
 <Location />

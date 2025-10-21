@@ -54,7 +54,7 @@ body {
 body {
 	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
-	background-color: $bg-color-1;
+	background-color: #fff;
 }
 
 body {
@@ -105,7 +105,10 @@ section.letter,
 section.rsvp,
 section.gallery,
 section.calendar,
-section.location {
+section.location,
+section.account,
+section.DateSection,
+section.info {
 	max-width: $content-max-width;
 	margin: auto;
 }

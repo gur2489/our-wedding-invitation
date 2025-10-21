@@ -1,5 +1,4 @@
 <script lang="ts">
-	import locationTopWave from '$lib/assets/location-top-wave.svg';
 	import locationDeco from '$lib/assets/location-deco.svg';
 	import { _ } from 'svelte-i18n';
 	import { localeStore } from '../i18n.svelte';
@@ -24,6 +23,9 @@
 	let mapContainer: HTMLDivElement;
 	const address = '서울특별시 강남구 학동로47길 5';
 	const placeName = '라온제나';
+
+	let lat: number;
+	let lng: number;
 
 	onMount(() => {
 		if (typeof window !== 'undefined' && getNaverMaps()) {
@@ -58,7 +60,9 @@
 		const naver = getNaverMaps();
 		if (!naver) return;
 
-		const { lat, lng } = await getCoordinates();
+		const coords = await getCoordinates();
+		lat = coords.lat;
+		lng = coords.lng;
 		const location = new naver.LatLng(lat, lng);
 
 		const map = new naver.Map(mapContainer, {
@@ -98,14 +102,59 @@
 		const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(address)}`;
 		window.open(naverMapUrl, '_blank');
 	}
+
+	async function shareLocation() {
+		const shareData = {
+			title: `${placeName}`,
+			text: `${address}`,
+			url: window.location.href,
+		};
+
+		if (navigator.share) {
+			try {
+				await navigator.share(shareData);
+			} catch (err) {
+				console.error('공유 취소 또는 오류:', err);
+			}
+		} else {
+			alert('현재 브라우저에서는 공유 기능을 지원하지 않습니다.');
+		}
+	}
+
+	function openNaverMapApp() {
+		const appUrl = `nmap://search?query=${encodeURIComponent(placeName)}&appname=myweb.page`;
+		const webUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName)}`;
+		window.location.href = appUrl;
+		setTimeout(() => (window.location.href = webUrl), 1000);
+	}
+
+	function openTmap() {
+		if (!lat || !lng) {
+			alert('지도가 아직 로드되지 않았습니다.');
+			return;
+		}
+		const appUrl = `tmap://search?name=${encodeURIComponent(placeName)}&lon=${lng}&lat=${lat}`;
+		const storeUrl = 'https://play.google.com/store/apps/details?id=com.skt.tmap.ku';
+		window.location.href = appUrl;
+		setTimeout(() => (window.location.href = storeUrl), 1000);
+	}
+
+	function openKakaoNavi() {
+		if (!lat || !lng) {
+			alert('지도가 아직 로드되지 않았습니다.');
+			return;
+		}
+		const appUrl = `kakaonavi://navigate?name=${encodeURIComponent(placeName)}&x=${lng}&y=${lat}&coord_type=wgs84`;
+		const storeUrl = 'https://play.google.com/store/apps/details?id=com.locnall.KimGiSa';
+		window.location.href = appUrl;
+		setTimeout(() => (window.location.href = storeUrl), 1000);
+	}
 </script>
 
-<img src={locationTopWave} class="location-top-wave" alt="" />
 <section class="location">
-	<h2 class="title {localeStore.locale}">{$_('location.title')}</h2>
-	<p class="venue en">{placeName}</p>
+	<h2 class="title {localeStore.locale}">라온제나 강남</h2>
 	
-	<button class="copy-address en" on:click={copyAddress}>
+	<button class="copy-address kr" on:click={copyAddress}>
 		<span class="clipboard-icon">
 			<Clipboard size="1.1em" />
 		</span>
@@ -119,17 +168,54 @@
 		</button>
 	</div>
 
-	<p class="signature en">made with ♡ by Emily & Anthony</p>
-	<a class="github-icon" href="https://github.com/anthopark/our-wedding-invitation" target="_blank">
-		<Github size="1.1em" strokeWidth={1} />
-	</a>
-	<img class="location-deco" src={locationDeco} alt="" />
+	<div class="map-app-buttons">
+		<button on:click={openNaverMapApp}>네이버지도</button>
+		<button on:click={openTmap}>티맵</button>
+		<button on:click={openKakaoNavi}>카카오내비</button>
+	</div>
+
+	<button class="share-button" on:click={shareLocation}>
+		공유하기
+	</button>
 </section>
 
 <style lang="scss">
-	img.location-top-wave {
-		max-width: $content-max-width;
-		margin: auto;
+
+	.map-app-buttons {
+		display: flex;
+		gap: 0.6rem;
+		justify-content: center;
+		margin-top: 1.2rem;
+	}
+	.map-app-buttons button {
+		flex: 1;
+		padding: 0.7rem 1rem;
+		border: none;
+		border-radius: 8px;
+		background-color: #5FBDFF;
+		color: white;
+		font-size: 0.95rem;
+		cursor: pointer;
+		transition: background 0.25s;
+	}
+	.map-app-buttons button:hover {
+		background-color: #4aa5e8;
+	}
+
+	.share-button {
+		display: block;
+		margin: 1.5rem auto 0;
+		padding: 0.75rem 1.2rem;
+		font-size: 1rem;
+		background-color: #5FBDFF;
+		color: white;
+		border: none;
+		border-radius: 10px;
+		cursor: pointer;
+		transition: background 0.3s;
+	}
+	.share-button:hover {
+		background-color: #4aa5e8;
 	}
 
 	section.location {
@@ -137,28 +223,20 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		background-color: $bg-color-1;
-		padding: 1em 2em 1em 2em;
+		background-color: #faeef2;
+		padding: 3em 2em;
 	}
 
 	h2.title {
-		color: $primary-color;
+		color: #444;
 		text-align: center;
-		margin-bottom: 1em;
-
-		&.kr {
-			@extend .title-font-kr;
-			letter-spacing: 1px;
-		}
-
-		&.en {
-			@extend .title-font-en;
-			letter-spacing: 1px;
-		}
+		color: #444;
+		font-size: 1rem;
+		font-weight: 500;
 	}
 
 	p.venue.en {
-		font-size: 1.2rem;
+		font-size: 1rem;
 		font-weight: 600;
 	}
 
@@ -178,8 +256,7 @@
 		}
 
 		.address {
-			font-size: 1.1rem;
-			text-decoration: underline;
+			font-size: 1rem;
 		}
 	}
 

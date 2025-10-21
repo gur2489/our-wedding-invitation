@@ -12,37 +12,33 @@
 
 <section class="letter">
 	<div class="header">
-		<img class="header-deco" src={letterDeco} alt="letter header deco" />
-		<h2 class="title {localeStore.locale}">{$_('letter.date')}</h2>
 		<p class="sub-title {localeStore.locale}">{$_('letter.sub_title')}</p>
 	</div>
 
 	<div class="letter-container">
 		<p class="letter {localeStore.locale}">{$_('letter.letter_content')}</p>
-
-		{#if localeStore.isEn}
-			<div class="letter-signature">
-				<p class="en">with love</p>
-				<p class="en">Emily & Anthony</p>
+		<div class="couple-section {localeStore.locale}">
+			<div class="welcome-text">welcome to our wedding!</div>
+			
+			<div class="couple-container">
+				<div class="groom">
+					<div class="name">임재혁</div>
+					<div class="parents">임원섭·윤지영의 아들</div>
+				</div>
+				
+				<div class="heart-divider">❤</div>
+				
+				<div class="bride">
+					<div class="name">서승연</div>
+					<div class="parents">서홍교·신영채의 딸</div>
+				</div>
 			</div>
-		{:else}
-			<div class="family-description kr">
-				<p>
-					임원섭<span class="name-divider">{@html nameDivider}</span> 윤지영
-					<span class="son">의 아들</span>임재혁
-				</p>
-				<p>
-					서홍교<span class="name-divider">{@html nameDivider}</span> 신영채<span class="daughter"
-						>의 딸</span
-					>서승연
-				</p>
-			</div>
-		{/if}
+		</div>
 	</div>
 </section>
-
-<img class="letter-bottom" src={letterBottom} alt="letter bottom" />
-
+<div class="img-wrapper">
+	<img class="letter-bottom" src={letterBottom} alt="letter bottom" />
+</div>
 <style lang="scss">
 	section.letter {
 		padding: 4.5em 3.5em 3em 3.5em;
@@ -76,7 +72,7 @@
 	}
 
 	.sub-title {
-		color: $primary-color;
+		color: $bk;
 		&.kr {
 			font-weight: 500;
 			font-size: 1rem;
@@ -89,9 +85,11 @@
 	}
 
 	p.letter {
+		color: $gr;
 		text-align: center;
+		white-space: pre-line;
 		&.kr {
-			line-height: 2.3em;
+			line-height: 1.5em;
 			font-size: 0.9rem;
 		}
 		&.en {
@@ -109,29 +107,71 @@
 		}
 	}
 
-	.family-description {
-		margin-top: 2em;
-		p {
-			color: $font-color-default;
-			display: grid;
-			grid-template-columns: repeat(5, 1fr);
-			column-gap: 12px;
-			margin-bottom: 20px;
-			align-items: center;
+	.letter-bottom {
+			width: 100%;
+			display: block;
+	}
 
-			.name-divider {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			}
-
-			.son,
-			.daughter {
-				display: flex;
-				justify-content: center;
-				font-size: 12px;
-				color: $primary-color;
-			}
+	@media (max-width: 600px) {
+		.img-wrapper {
+			width:100%;
 		}
+		
+	}
+
+	@media (min-width: 700px) {
+		.img-wrapper {
+			max-width: 600px;
+        	margin: auto;
+		}
+	}
+	
+
+	.couple-section {
+		max-width: 600px;
+		margin: 0 auto;
+		padding: 60px 0 10px;
+	}
+
+	.welcome-text {
+		font-family: 'Georgia', serif;
+		font-style: italic;
+		font-size: 28px;
+		text-align: center;
+		margin-bottom: 30px;
+		color: #333;
+	}
+
+	.couple-container {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.groom, .bride {
+		flex: 1;
+		text-align: center;
+	}
+
+	.name {
+		font-size: 24px;
+		font-weight: 600;
+		margin-bottom: 5px;
+		color: #333;
+		letter-spacing: 2px;
+	}
+
+	.parents {
+		font-size: 14px;
+		color: #666;
+		line-height: 1.6;
+	}
+
+	.heart-divider {
+		flex-shrink: 0;
+		font-size: 32px;
+		color: #e74c3c;
+		animation: heartbeat 1.5s ease-in-out infinite;
 	}
 </style>

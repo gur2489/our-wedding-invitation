@@ -19,10 +19,17 @@
 	});
 
 	const urlCopied = writable(false);
-	const expandedSide = writable<AccountSide | null>(null);
+	const showModal = writable(false);
+	const modalSide = writable<AccountSide | null>(null);
 
-	const toggleSide = (side: AccountSide) => {
-		expandedSide.update((current) => (current === side ? null : side));
+	const openModal = (side: AccountSide) => {
+		modalSide.set(side);
+		showModal.set(true);
+	};
+
+	const closeModal = () => {
+		showModal.set(false);
+		modalSide.set(null);
 	};
 
 	const copyToClipboard = (text: string, person: AccountPerson) => {
@@ -82,18 +89,39 @@
 </script>
 
 <section class="account-section {bgColor}">
-	<h2 class="section-title">마음 전하실 곳</h2>
+	<div class="toast-icon">🥂</div>
+	<h2 class="section-title kr">축하의 마음을 전해주실 분들을 위해 안내드립니다.</h2>
 
 	<div class="account-cards">
-		<!-- 신랑측 -->
-		<div class="account-card" on:click={() => toggleSide('groom')}>
-			<div class="account-card-header">
-				<h3 class="group-title">신랑 측 계좌번호</h3>
-				<span class="expand-icon">{#if $expandedSide === 'groom'}−{:else}+{/if}</span>
-			</div>
+		<button class="account-card" on:click={() => openModal('groom')}>
+			<span class="card-text">신랑 측 계좌번호</span>
+		</button>
 
-			{#if $expandedSide === 'groom'}
-				<div class="account-rows-container">
+		<button class="account-card" on:click={() => openModal('bride')}>
+			<span class="card-text">신부 측 계좌번호</span>
+		</button>
+	</div>
+<!--
+	<div class="share-container">
+		<button class="share-button" on:click={copyWebsiteUrl}>
+			{#if $urlCopied}복사 완료!{:else}URL 복사하기{/if}
+		</button>
+		<button class="share-button" on:click={shareWebsite}>
+			공유하기
+		</button>
+	</div>
+-->
+</section>
+
+{#if $showModal}
+	<div class="modal-overlay" on:click={closeModal}>
+		<div class="modal-content" on:click|stopPropagation>
+			<button class="modal-close" on:click={closeModal}>×</button>
+			
+			<h3 class="modal-title">{$modalSide === 'groom' ? '신랑' : '신부'} 측 계좌번호</h3>
+
+			<div class="modal-accounts">
+				{#if $modalSide === 'groom'}
 					{#each [
 						renderAccountRow(weddingConfig.account.groom, 'groom', '신랑'),
 						renderAccountRow(weddingConfig.account.groomFather, 'groomFather', '아버지'),
@@ -106,25 +134,13 @@
 									<div class="account-bank">{row.bank}</div>
 									<div class="account-number">{row.numberAndHolder}</div>
 								</div>
-								<button class="copy-button" on:click|stopPropagation={() => copyToClipboard(row.copyText, row.person)}>
+								<button class="copy-button" on:click={() => copyToClipboard(row.copyText, row.person)}>
 									{#if $copyStatus[row.person]}복사 완료{:else}복사{/if}
 								</button>
 							</div>
 						{/if}
 					{/each}
-				</div>
-			{/if}
-		</div>
-
-		<!-- 신부측 -->
-		<div class="account-card" on:click={() => toggleSide('bride')}>
-			<div class="account-card-header">
-				<h3 class="group-title">신부 측 계좌번호</h3>
-				<span class="expand-icon">{#if $expandedSide === 'bride'}−{:else}+{/if}</span>
-			</div>
-
-			{#if $expandedSide === 'bride'}
-				<div class="account-rows-container">
+				{:else}
 					{#each [
 						renderAccountRow(weddingConfig.account.bride, 'bride', '신부'),
 						renderAccountRow(weddingConfig.account.brideFather, 'brideFather', '아버지'),
@@ -137,59 +153,202 @@
 									<div class="account-bank">{row.bank}</div>
 									<div class="account-number">{row.numberAndHolder}</div>
 								</div>
-								<button class="copy-button" on:click|stopPropagation={() => copyToClipboard(row.copyText, row.person)}>
+								<button class="copy-button" on:click={() => copyToClipboard(row.copyText, row.person)}>
 									{#if $copyStatus[row.person]}복사 완료{:else}복사{/if}
 								</button>
 							</div>
 						{/if}
 					{/each}
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
 	</div>
-
-	<div class="share-container">
-		<button class="share-button" on:click={copyWebsiteUrl}>
-			{#if $urlCopied}복사 완료!{:else}URL 복사하기{/if}
-		</button>
-		<button class="share-button" on:click={shareWebsite}>
-			공유하기
-		</button>
-	</div>
-</section>
+{/if}
 
 <style>
 .account-section.white { background-color: white; }
 .account-section.beige { background-color: #F8F6F2; }
-.account-section { padding: 4rem 1.5rem; text-align: center; }
-.section-title { position: relative; display: inline-block; margin-bottom: 2rem; font-weight: 500; font-size: 1.5rem; }
-.section-title::after {
-	content: '';
-	position: absolute;
-	bottom: -16px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background-color: #c4a986;
+.account-section { padding: 0rem 1.5rem 4rem; text-align: center; }
+
+.toast-icon {
+	font-size: 3rem;
+	margin-bottom: 1.5rem;
 }
-.account-cards { display: flex; flex-direction: column; gap: 1.5rem; max-width: 40rem; margin: 0 auto; }
-.account-card { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; }
-.account-card:hover { box-shadow: 0 6px 10px rgba(0,0,0,0.1); }
-.account-card-header { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; border-bottom: 1px solid #eee; }
-.group-title { font-weight: 400; font-size: 1rem; color: #333; margin: 0; text-align: left; }
-.expand-icon { font-size: 1.5rem; color: #c4a986; }
-.account-rows-container { display: flex; flex-direction: column; }
-.account-row { display: flex; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #f5f5f5; }
-.account-row:last-child { border-bottom: none; }
-.account-row-title { font-weight: 500; font-size: 0.95rem; color: #c4a986; min-width: 100px; text-align: left; }
-.account-row-info { display: flex; flex-direction: column; flex: 1; gap: 0.1rem; }
-.account-bank { font-size: 0.85rem; color: #666; white-space: nowrap; }
-.account-number { font-weight: 500; font-size: 0.95rem; color: #333; word-break: break-all; }
-.copy-button { background: transparent; border: 1px solid #c4a986; color: #c4a986; padding: 0.35rem 0.5rem; border-radius: 4px; cursor: pointer; margin-left: 0.5rem; }
-.copy-button:hover { background: #c4a986; color: white; }
-.share-container { margin-top: 2rem; display: flex; justify-content: center; gap: 1rem; }
-.share-button { background-color: #c4a986; color: white; border: none; border-radius: 4px; padding: 0.75rem 1.5rem; cursor: pointer; }
-.share-button:hover { background-color: #b39c7a; }
+
+.section-title {
+	font-weight: 500;
+	font-size: 1rem;
+	margin-bottom: 1rem;
+	line-height: 1.6;
+}
+
+.account-cards {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	max-width: 26rem;
+	margin: 0 auto;
+	align-items: center;
+}
+
+.account-card {
+	background: white;
+	border: 1.5px solid #ff6e72;
+	border-radius: 50px;
+	padding: 0.5rem 2rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	width: 70%;
+}
+
+.account-card:hover {
+	background: #fdfcfb;
+	transform: translateY(-2px);
+}
+
+.card-text {
+	font-size: 1rem;
+	color: #333;
+	font-weight: 400;
+}
+
+.share-container {
+	margin-top: 2.5rem;
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.share-button {
+	background-color: #c4a986;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 0.75rem 1.5rem;
+	cursor: pointer;
+	font-size: 0.95rem;
+}
+
+.share-button:hover {
+	background-color: #b39c7a;
+}
+
+/* Modal Styles */
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	padding: 1rem;
+}
+
+.modal-content {
+	background: white;
+	border-radius: 12px;
+	padding: 2rem 1.5rem;
+	max-width: 28rem;
+	width: 100%;
+	max-height: 80vh;
+	overflow-y: auto;
+	position: relative;
+}
+
+.modal-close {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	background: none;
+	border: none;
+	font-size: 2rem;
+	color: #999;
+	cursor: pointer;
+	padding: 0;
+	width: 2rem;
+	height: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+}
+
+.modal-close:hover {
+	color: #333;
+}
+
+.modal-title {
+	font-size: 1.25rem;
+	font-weight: 500;
+	color: #333;
+	margin-bottom: 1.5rem;
+	text-align: center;
+}
+
+.modal-accounts {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.account-row {
+	display: flex;
+	align-items: center;
+	padding: 1rem;
+	border-bottom: 1px solid #f5f5f5;
+	gap: 1rem;
+}
+
+.account-row:last-child {
+	border-bottom: none;
+}
+
+.account-row-title {
+	font-weight: 500;
+	font-size: 0.95rem;
+	color: #c4a986;
+	min-width: 70px;
+	text-align: left;
+}
+
+.account-row-info {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	gap: 0.1rem;
+	text-align: left;
+}
+
+.account-bank {
+	font-size: 0.85rem;
+	color: #666;
+	white-space: nowrap;
+}
+
+.account-number {
+	font-weight: 500;
+	font-size: 0.95rem;
+	color: #333;
+	word-break: break-all;
+}
+
+.copy-button {
+	background: transparent;
+	border: 1px solid #c4a986;
+	color: #c4a986;
+	padding: 0.4rem 0.8rem;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.85rem;
+	white-space: nowrap;
+}
+
+.copy-button:hover {
+	background: #c4a986;
+	color: white;
+}
 </style>

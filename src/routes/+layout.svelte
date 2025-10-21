@@ -31,8 +31,8 @@
 	/>
 	<meta property="og:title" content="Jaehyuk & Seungyeon's Wedding" />
 	<meta property="og:description" content="Please join us on our most special day!" />
-	<meta property="og:image" content="https://emily-marries-anthony.com/preview.jpg" />
-	<meta property="og:url" content="https://ad23ffef.our-wedding-invitation-ee0.pages.dev/" />
+	<meta property="og:image" content="https://our-wedding-invitation-ee0.pages.dev/_app/immutable/assets/gallery2.i0KkDjIH.jpg" />
+	<meta property="og:url" content="https://our-wedding-invitation-ee0.pages.dev/" />
 	<meta property="og:type" content="website" />
 </svelte:head>
 
