@@ -2,7 +2,7 @@
 	import letterBottom from '$lib/assets/letter-bottom.jpg';
 	import { _ } from 'svelte-i18n';
 	import { localeStore } from '../i18n.svelte';
-	import letterDeco from '$lib/assets/letter-deco.svg';
+	import Ring from '$lib/assets/icons/ring.png';
 
 	const nameDivider = `
     <svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -12,6 +12,7 @@
 
 <section class="letter">
 	<div class="header">
+		<img src={Ring} class="icon-img">
 		<p class="sub-title {localeStore.locale}">{$_('letter.sub_title')}</p>
 	</div>
 
@@ -40,6 +41,13 @@
 	<img class="letter-bottom" src={letterBottom} alt="letter bottom" />
 </div>
 <style lang="scss">
+
+	.icon-img{
+		width:50px;
+		display: inline-block;
+		margin: 0rem 0 1rem;
+	}
+
 	section.letter {
 		padding: 4.5em 3.5em 3em 3.5em;
 	}
@@ -133,9 +141,15 @@
 		padding: 60px 0 10px;
 	}
 
+	@font-face {
+		font-family: 'AstonScript';
+		src: url('/src/lib/assets/font/AstonScript.ttf') format('truetype');
+		font-weight: normal;
+		font-style: normal;
+	}
+
 	.welcome-text {
-		font-family: 'Georgia', serif;
-		font-style: italic;
+		font-family: 'AstonScript', cursive;
 		font-size: 28px;
 		text-align: center;
 		margin-bottom: 30px;

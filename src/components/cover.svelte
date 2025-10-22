@@ -16,7 +16,7 @@
 	}
 </script>
 
-<section style:height={`${sectionHeight}px`} class="cover">
+<section class="cover">
 	<div class="confetti-area">
 		<Confetti
 			x={[-5, 5]}
@@ -29,24 +29,6 @@
 			fallDistance={`${sectionHeight}px`}
 		/>
 	</div>
-<!--
-	<div class="names-kr-box">
-		<span class="names kr">임재혁</span>
-		<span class="names kr">그리고</span>
-		<span class="names kr">서승연</span>
-	</div>
--->
-	<div class="cover-title-container">
-		<div class="names-en-box">
-			<!--<span class="names en-sacramento">임재혁 & 서승연</span>-->
-		</div>
-<!--
-		<div class="event-date-and-place-box">
-			<span class="event-date-and-time {localeStore.locale}">{$_('cover.date')}</span>
-			<span class="event-place {localeStore.locale}">{$_('cover.place')}</span>
-		</div>
--->
-	</div>
 </section>
 
 <style lang="scss">
@@ -56,6 +38,7 @@
 		background-repeat: no-repeat;
 		background-position: center center;
 		background-size: cover;
+		height: 100dvh;
 	}
 	.confetti-area {
 		position: absolute;

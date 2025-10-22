@@ -3,6 +3,7 @@
 	import { weddingConfig } from '$lib/config/wedding-config';
 	import type { AccountInfo } from '$lib/types/wedding';
 	import { writable } from 'svelte/store';
+	import Cheers from '$lib/assets/icons/cheers.png';
 
 	type AccountPerson = 'groom' | 'bride' | 'groomFather' | 'groomMother' | 'brideFather' | 'brideMother';
 	type AccountSide = 'groom' | 'bride';
@@ -89,7 +90,7 @@
 </script>
 
 <section class="account-section {bgColor}">
-	<div class="toast-icon">🥂</div>
+	<img src={Cheers} class="icon-img">
 	<h2 class="section-title kr">축하의 마음을 전해주실 분들을 위해 안내드립니다.</h2>
 
 	<div class="account-cards">
@@ -170,9 +171,10 @@
 .account-section.beige { background-color: #F8F6F2; }
 .account-section { padding: 0rem 1.5rem 4rem; text-align: center; }
 
-.toast-icon {
-	font-size: 3rem;
-	margin-bottom: 1.5rem;
+.icon-img{
+	width:50px;
+	display: inline-block;
+	margin: 3rem 0 1rem;
 }
 
 .section-title {

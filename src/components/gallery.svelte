@@ -16,6 +16,7 @@
 	import { onMount } from 'svelte';
 	import { localeStore } from '../i18n.svelte';
 	import { _ } from 'svelte-i18n';
+	import Camera from '$lib/assets/icons/camera.png';
 
 	onMount(() => {
 		const lightbox = new PhotoSwipeLightBox({
@@ -84,7 +85,7 @@
 
 <section class="gallery">
 	<div class="header">
-		아이콘
+		<img src={Camera} class="icon-img">
 	</div>
 	<div id="gallery">
 		{#each photos as photo}
@@ -102,13 +103,21 @@
 </section>
 
 <style lang="scss">
+
+	.icon-img{
+		width:50px;
+		display: inline-block;
+		margin: 0rem 0 1rem;
+	}
+
+
 	section.gallery {
-		padding: 4.5em 2em 2em 2em;
+		padding: 3em 2em 2em 2em;
 		background-color: $white;
 	}
 
 	.header {
-		margin-bottom: 2em;
+		text-align: center;
 	}
 
 	h2.title {

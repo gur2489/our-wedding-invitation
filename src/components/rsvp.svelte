@@ -3,7 +3,7 @@
 	import { localeStore } from '../i18n.svelte';
 	import { LoaderCircle } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
-	import rsvpDeco from '$lib/assets/rsvp-deco.svg';
+	import Hug from '$lib/assets/icons/hug.png';
 
 	let { form } = $props();
 
@@ -44,7 +44,7 @@
 <!-- 참석 여부 섹션 -->
 <section class="rsvp">
 	<div class="header">
-		<div class="icon">👰</div>
+		<img src={Hug} class="icon-img">
 		<h2 class="title">참석 & 대절 버스 탑승 여부 회신</h2>
 		<p class="sub-title">
 			오는 부분을 귀하게 모실 수 있도록<br />
@@ -119,26 +119,6 @@
 					/>
 				</div>
 
-				<!-- 참석인원 -->
-				<div class="form-group">
-					<label class="form-label">참석인원</label>
-					<input
-						class="form-input"
-						type="text"
-						placeholder="본인 포함 총 참석인원"
-					/>
-				</div>
-
-				<!-- 동행인 -->
-				<div class="form-group">
-					<label class="form-label">동행인</label>
-					<input
-						class="form-input"
-						type="text"
-						placeholder="함께 오시는 분 성함"
-					/>
-				</div>
-
 				<!-- 식사여부 -->
 				<div class="form-group">
 					<label class="form-label">식사여부</label>
@@ -153,6 +133,48 @@
 							미정
 						</button>
 					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="form-label">구분</label>
+					<div class="button-group">
+						<button
+							type="button"
+							class="option-button"
+							class:active={rsvpBus === 'yes'}
+							onclick={() => selectRsvpBus('yes')}
+						>
+							탑승
+						</button>
+						<button
+							type="button"
+							class="option-button"
+							class:active={rsvpBus === 'no'}
+							onclick={() => selectRsvpBus('no')}
+						>
+							개별이동
+						</button>
+					</div>
+				</div>
+
+				<!-- 탑승위치 -->
+				<div class="form-group">
+					<label class="form-label">탑승위치</label>
+					<input
+						class="form-input"
+						type="text"
+						placeholder="탑승하실 위치를 입력해주세요"
+					/>
+				</div>
+
+				<!-- 탑승인원 -->
+				<div class="form-group">
+					<label class="form-label">탑승인원</label>
+					<input
+						class="form-input"
+						type="text"
+						placeholder="본인 포함 총 탑승인원"
+					/>
 				</div>
 
 				<button class="submit-button" type="submit" disabled={submitting}>
@@ -178,130 +200,16 @@
 	</div>
 {/if}
 
-<!-- 대절버스 탑승 여부 섹션 -->
-<section class="rsvp rsvp-bus">
-	<div class="header">
-		<div class="icon">🚌</div>
-		<h2 class="title">대절 버스 탑승 여부</h2>
-		<p class="sub-title">
-			편안한 이동을 위해 대절 버스를<br />
-			준비했습니다. 탑승 의사를 전달해주세요.
-		</p>
-	</div>
-
-	<button class="open-modal-button" onclick={openBusModal}>
-		탑승여부 전달하기
-	</button>
-</section>
-
-<!-- 대절버스 모달 -->
-{#if showBusModal}
-	<div class="modal-overlay" onclick={closeBusModal}>
-		<div class="modal-content" onclick={(e) => e.stopPropagation()}>
-			<div class="modal-header">
-				<h3 class="modal-title">대절 버스 탑승 여부</h3>
-				<button class="modal-close" onclick={closeBusModal}>×</button>
-			</div>
-
-			<form
-				class="rsvp-form"
-				method="POST"
-				action="?/rsvpBus"
-				use:enhance={({ formData }) => {
-					submittingBus = true;
-					formData.append('rsvp_b', rsvpBus ?? '');
-					return ({ update, result }) => {
-						update({}).finally(() => {
-							submittingBus = false;
-							if (result.status === 200) {
-								rsvpBus = null;
-								formNameBus = '';
-								closeBusModal();
-							}
-						});
-					};
-				}}
-			>
-				<!-- 구분 -->
-				<div class="form-group">
-					<label class="form-label">구분</label>
-					<div class="button-group">
-						<button
-							type="button"
-							class="option-button"
-							class:active={rsvpBus === 'yes'}
-							onclick={() => selectRsvpBus('yes')}
-						>
-							탑승
-						</button>
-						<button
-							type="button"
-							class="option-button"
-							class:active={rsvpBus === 'no'}
-							onclick={() => selectRsvpBus('no')}
-						>
-							개별이동
-						</button>
-					</div>
-				</div>
-
-				<!-- 성함 -->
-				<div class="form-group">
-					<label class="form-label">성함</label>
-					<input
-						class="form-input"
-						name="fullname_b"
-						bind:value={formNameBus}
-						placeholder=""
-					/>
-				</div>
-
-				<!-- 탑승인원 -->
-				<div class="form-group">
-					<label class="form-label">탑승인원</label>
-					<input
-						class="form-input"
-						type="text"
-						placeholder="본인 포함 총 탑승인원"
-					/>
-				</div>
-
-				<!-- 탑승위치 -->
-				<div class="form-group">
-					<label class="form-label">탑승위치</label>
-					<input
-						class="form-input"
-						type="text"
-						placeholder="탑승하실 위치를 입력해주세요"
-					/>
-				</div>
-
-				<button class="submit-button" type="submit" disabled={submittingBus}>
-					{#if submittingBus}
-						<div class="spinning">
-							<LoaderCircle />
-						</div>
-					{:else}
-						탑승 의사 전달하기
-					{/if}
-				</button>
-			</form>
-
-			<div class="submit-message">
-				{#if form?.successB}
-					<p class="success">전송이 완료되었습니다.</p>
-				{/if}
-				{#if form?.emailErrorB}
-					<p class="error">전송에 실패했습니다.</p>
-				{/if}
-			</div>
-		</div>
-	</div>
-{/if}
-
 <style lang="scss">
+
+	.icon-img{
+		width:50px;
+		display: inline-block;
+		margin: 3rem 0 1rem;
+	}
+
 	section.rsvp {
-		padding: 1.5em 3.5em;
+		padding: 0rem 1.5rem 4rem;
 		text-align: center;
 	}
 
@@ -327,21 +235,17 @@
 		font-size: 0.9rem;
 		color: #666;
 		line-height: 1.6;
-		margin-bottom: 2rem;
+		margin-bottom: 1rem;
 	}
 
 	.open-modal-button {
-		background: white;
-		border: 1.5px solid #d4b896;
+		background: #fff;
+		border: 1.5px solid #ff6e72;
 		border-radius: 50px;
-		padding: 1rem 2rem;
+		padding: .5rem 2rem;
 		cursor: pointer;
-		font-size: 1rem;
-		color: #333;
-		max-width: 26rem;
-		width: 100%;
-		margin: 0 auto;
-		transition: all 0.2s ease;
+		transition: all .2s ease;
+		width: 50%;
 	}
 
 	.open-modal-button:hover {
