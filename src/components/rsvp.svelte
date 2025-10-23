@@ -2,34 +2,40 @@
 	import { _ } from 'svelte-i18n';
 	import { localeStore } from '../i18n.svelte';
 	import { LoaderCircle } from '@lucide/svelte';
-	import { enhance } from '$app/forms';
 	import Hug from '$lib/assets/icons/hug.png';
+	import emailjs from '@emailjs/browser';
 
 	let { form } = $props();
 
 	let showModal = $state(false);
-	let showBusModal = $state(false);
 	let rsvp = $state<'yes' | 'no' | null>(null);
 	let rsvpBus = $state<'yes' | 'no' | null>(null);
+	let mealOption = $state<'yes' | 'no' | 'undecided' | null>(null);
 	let submitting = $state(false);
-	let submittingBus = $state(false);
 	let formName = $state('');
-	let formNameBus = $state('');
+	let busLocation = $state('');
+	let busPassengers = $state('');
+	let submitMessage = $state<{type: 'success' | 'error', text: string} | null>(null);
+
+	// EmailJS 설정 (실제 값으로 교체 필요)
+	const EMAILJS_SERVICE_ID = 'service_pznskvk';
+	const EMAILJS_TEMPLATE_ID = 'template_qlx264m';
+	const EMAILJS_PUBLIC_KEY = 'wYQ2uZNRB1EHBmSs8';
 
 	function openModal() {
 		showModal = true;
+		submitMessage = null;
 	}
 
 	function closeModal() {
 		showModal = false;
-	}
-
-	function openBusModal() {
-		showBusModal = true;
-	}
-
-	function closeBusModal() {
-		showBusModal = false;
+		rsvp = null;
+		rsvpBus = null;
+		mealOption = null;
+		formName = '';
+		busLocation = '';
+		busPassengers = '';
+		submitMessage = null;
 	}
 
 	function selectRsvp(option: 'yes' | 'no') {
@@ -39,16 +45,66 @@
 	function selectRsvpBus(option: 'yes' | 'no') {
 		rsvpBus = option;
 	}
+
+	function selectMealOption(option: 'yes' | 'no' | 'undecided') {
+		mealOption = option;
+	}
+
+	async function handleSubmit(e: Event) {
+		e.preventDefault();
+		
+		if (!rsvp || !formName || !mealOption || !rsvpBus) {
+			submitMessage = {type: 'error', text: '모든 필수 항목을 입력해주세요.'};
+			return;
+		}
+
+		submitting = true;
+		submitMessage = null;
+
+		const side = rsvp === 'yes' ? '신랑측' : '신부측';
+		const mealStatus = mealOption === 'yes' ? '예정' : mealOption === 'no' ? '안함' : '미정';
+		const busStatus = rsvpBus === 'yes' ? '탑승' : '개별이동';
+
+		const templateParams = {
+			fullname: formName,
+			side: side,
+			meal: mealStatus,
+			bus: busStatus,
+			bus_location: rsvpBus === 'yes' ? busLocation : '-',
+			bus_passengers: rsvpBus === 'yes' ? busPassengers + '명' : '-'
+		};
+
+		try {
+			await emailjs.send(
+				EMAILJS_SERVICE_ID,
+				EMAILJS_TEMPLATE_ID,
+				templateParams,
+				EMAILJS_PUBLIC_KEY
+			);
+
+			submitMessage = {type: 'success', text: '전송이 완료되었습니다.'};
+			
+			// 3초 후 모달 닫기
+			setTimeout(() => {
+				closeModal();
+			}, 2000);
+		} catch (error) {
+			console.error('Email sending failed:', error);
+			submitMessage = {type: 'error', text: '전송에 실패했습니다. 다시 시도해주세요.'};
+		} finally {
+			submitting = false;
+		}
+	}
 </script>
 
 <!-- 참석 여부 섹션 -->
 <section class="rsvp">
 	<div class="header">
-		<img src={Hug} class="icon-img">
+		<img src={Hug} class="icon-img" alt="Hug icon">
 		<h2 class="title">참석 & 대절 버스 탑승 여부 회신</h2>
 		<p class="sub-title">
-			오는 부분을 귀하게 모실 수 있도록<br />
-			참석 의사를 전달 부탁드립니다.
+			참석 하실 분을 귀하게 모실 수 있도록<br />
+			의사를 전달 부탁드립니다.
 		</p>
 	</div>
 
@@ -62,29 +118,11 @@
 	<div class="modal-overlay" onclick={closeModal}>
 		<div class="modal-content" onclick={(e) => e.stopPropagation()}>
 			<div class="modal-header">
-				<h3 class="modal-title">참석 의사 전달</h3>
+				<h3 class="modal-title">참석 & 대절 버스 탑승 여부 의사 전달</h3>
 				<button class="modal-close" onclick={closeModal}>×</button>
 			</div>
 
-			<form
-				class="rsvp-form"
-				method="POST"
-				action="?/rsvp"
-				use:enhance={({ formData }) => {
-					submitting = true;
-					formData.append('rsvp', rsvp ?? '');
-					return ({ update, result }) => {
-						update({}).finally(() => {
-							submitting = false;
-							if (result.status === 200) {
-								rsvp = null;
-								formName = '';
-								closeModal();
-							}
-						});
-					};
-				}}
-			>
+			<form class="rsvp-form" onsubmit={handleSubmit}>
 				<!-- 구분 -->
 				<div class="form-group">
 					<label class="form-label">구분</label>
@@ -113,9 +151,9 @@
 					<label class="form-label">성함</label>
 					<input
 						class="form-input"
-						name="fullname"
 						bind:value={formName}
-						placeholder=""
+						placeholder="성함을 입력해주세요"
+						required
 					/>
 				</div>
 
@@ -123,20 +161,36 @@
 				<div class="form-group">
 					<label class="form-label">식사여부</label>
 					<div class="button-group">
-						<button type="button" class="option-button small">
+						<button 
+							type="button" 
+							class="option-button small"
+							class:active={mealOption === 'yes'}
+							onclick={() => selectMealOption('yes')}
+						>
 							예정
 						</button>
-						<button type="button" class="option-button small">
+						<button 
+							type="button" 
+							class="option-button small"
+							class:active={mealOption === 'no'}
+							onclick={() => selectMealOption('no')}
+						>
 							안함
 						</button>
-						<button type="button" class="option-button small">
+						<button 
+							type="button" 
+							class="option-button small"
+							class:active={mealOption === 'undecided'}
+							onclick={() => selectMealOption('undecided')}
+						>
 							미정
 						</button>
 					</div>
 				</div>
 
+				<!-- 버스 탑승 여부 -->
 				<div class="form-group">
-					<label class="form-label">구분</label>
+					<label class="form-label">버스 탑승 여부</label>
 					<div class="button-group">
 						<button
 							type="button"
@@ -157,27 +211,36 @@
 					</div>
 				</div>
 
-				<!-- 탑승위치 -->
-				<div class="form-group">
-					<label class="form-label">탑승위치</label>
-					<input
-						class="form-input"
-						type="text"
-						placeholder="탑승하실 위치를 입력해주세요"
-					/>
-				</div>
+				<!-- 탑승위치 (버스 탑승 시에만 표시) -->
+				{#if rsvpBus === 'yes'}
+					<div class="form-group">
+						<label class="form-label">탑승위치</label>
+						<input
+							class="form-input"
+							type="text"
+							bind:value={busLocation}
+							placeholder="탑승하실 위치를 입력해주세요"
+						/>
+					</div>
 
-				<!-- 탑승인원 -->
-				<div class="form-group">
-					<label class="form-label">탑승인원</label>
-					<input
-						class="form-input"
-						type="text"
-						placeholder="본인 포함 총 탑승인원"
-					/>
-				</div>
+					<!-- 탑승인원 -->
+					<div class="form-group">
+						<label class="form-label">탑승인원</label>
+						<input
+							class="form-input"
+							type="number"
+							min="1"
+							bind:value={busPassengers}
+							placeholder="본인 포함 총 탑승인원"
+						/>
+					</div>
+				{/if}
 
-				<button class="submit-button" type="submit" disabled={submitting}>
+				<button 
+					class="submit-button" 
+					type="submit" 
+					disabled={submitting || !rsvp || !formName || !mealOption || !rsvpBus}
+				>
 					{#if submitting}
 						<div class="spinning">
 							<LoaderCircle />
@@ -189,11 +252,8 @@
 			</form>
 
 			<div class="submit-message">
-				{#if form?.success}
-					<p class="success">전송이 완료되었습니다.</p>
-				{/if}
-				{#if form?.emailError}
-					<p class="error">전송에 실패했습니다.</p>
+				{#if submitMessage}
+					<p class={submitMessage.type}>{submitMessage.text}</p>
 				{/if}
 			</div>
 		</div>
@@ -245,7 +305,7 @@
 		padding: .5rem 2rem;
 		cursor: pointer;
 		transition: all .2s ease;
-		width: 50%;
+		width: 65%;
 	}
 
 	.open-modal-button:hover {

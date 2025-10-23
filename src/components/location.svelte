@@ -185,18 +185,19 @@
 		display: flex;
 		gap: 0.6rem;
 		justify-content: center;
-		margin-top: 1.2rem;
+		width:100%;
 	}
 	.map-app-buttons button {
-		flex: 1;
 		padding: 0.7rem 1rem;
 		border: none;
 		border-radius: 8px;
 		background-color: #5FBDFF;
 		color: white;
-		font-size: 0.95rem;
+		font-size: 0.7rem;
 		cursor: pointer;
 		transition: background 0.25s;
+		max-width: 110px;
+		width: 33%;
 	}
 	.map-app-buttons button:hover {
 		background-color: #4aa5e8;
@@ -204,18 +205,15 @@
 
 	.share-button {
 		display: block;
-		margin: 1.5rem auto 0;
-		padding: 0.75rem 1.2rem;
+		margin: 3rem auto 0;
 		font-size: 1rem;
-		background-color: #5FBDFF;
-		color: white;
-		border: none;
-		border-radius: 10px;
+		background: #fff;
+		border: 1.5px solid #ff6e72;
+		border-radius: 50px;
+		padding: .5rem 2rem;
 		cursor: pointer;
-		transition: background 0.3s;
-	}
-	.share-button:hover {
-		background-color: #4aa5e8;
+		transition: all .2s ease;
+		width: 50%;
 	}
 
 	section.location {
@@ -264,7 +262,7 @@
 		margin-top: 2em;
 		width: 100%;
 		height: 24em; // 지도를 크게
-		margin-bottom: 2em;
+		margin-bottom: 1em;
 		position: relative;
 	}
 

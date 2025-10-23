@@ -211,7 +211,7 @@ const day = weddingDate.getDate();
   }
 
   .value {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: #444;
   }

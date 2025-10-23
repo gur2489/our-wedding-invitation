@@ -333,7 +333,7 @@
 
 .account-number {
 	font-weight: 500;
-	font-size: 0.95rem;
+	font-size: 0.85rem;
 	color: #333;
 	word-break: break-all;
 }
