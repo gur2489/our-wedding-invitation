@@ -180,7 +180,7 @@ const day = weddingDate.getDate();
   .day.sat { color: #64b5f6; }
 
   .day.wedding {
-    background: #c2a97d;
+    background: #ffc2e5;
     color: white;
     font-weight: bold;
   }

@@ -169,9 +169,9 @@
 	</div>
 
 	<div class="map-app-buttons">
-		<button on:click={openNaverMapApp}>네이버지도</button>
-		<button on:click={openTmap}>티맵</button>
-		<button on:click={openKakaoNavi}>카카오내비</button>
+		<button on:click={openNaverMapApp} style="background-color: #2DB400;color:#fff">네이버지도</button>
+		<button on:click={openTmap} style="background-color: orange;color:#fff">티맵</button>
+		<button on:click={openKakaoNavi} style="background-color: #FEE500;color:#1E1E1E">카카오내비</button>
 	</div>
 
 	<button class="share-button" on:click={shareLocation}>
@@ -183,16 +183,16 @@
 
 	.map-app-buttons {
 		display: flex;
-		gap: 0.6rem;
+		gap: 1rem;
 		justify-content: center;
 		width:100%;
 	}
 	.map-app-buttons button {
 		padding: 0.7rem 1rem;
 		border: none;
-		border-radius: 8px;
-		background-color: #5FBDFF;
-		color: white;
+		border-radius: 50px;
+		background-color: #fdfdf5;
+		color: #ff6666;
 		font-size: 0.7rem;
 		cursor: pointer;
 		transition: background 0.25s;
@@ -204,16 +204,10 @@
 	}
 
 	.share-button {
-		display: block;
 		margin: 3rem auto 0;
-		font-size: 1rem;
-		background: #fff;
-		border: 1.5px solid #ff6e72;
-		border-radius: 50px;
-		padding: .5rem 2rem;
-		cursor: pointer;
-		transition: all .2s ease;
-		width: 50%;
+    	font-size: 1rem;
+		text-decoration: underline;
+		text-underline-offset: 4px;
 	}
 
 	section.location {

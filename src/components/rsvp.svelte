@@ -101,10 +101,10 @@
 <section class="rsvp">
 	<div class="header">
 		<img src={Hug} class="icon-img" alt="Hug icon">
-		<h2 class="title">참석 & 대절 버스 탑승 여부 회신</h2>
-		<p class="sub-title">
-			참석 하실 분을 귀하게 모실 수 있도록<br />
-			의사를 전달 부탁드립니다.
+		<h2 class="title kr">참석 & 대절 버스 탑승 여부 회신</h2>
+		<p class="sub-title kr">
+			모든 분들을 귀하게 모실 수 있도록<br />
+			참석 의사를 전달 부탁드립니다.
 		</p>
 	</div>
 
@@ -269,7 +269,7 @@
 	}
 
 	section.rsvp {
-		padding: 0rem 1.5rem 4rem;
+		padding: 0rem 1.5rem 3rem;
 		text-align: center;
 	}
 
@@ -285,8 +285,8 @@
 	}
 
 	h2.title {
-		color: #333;
-		font-size: 1.1rem;
+		color: #4e4e4e;
+		font-size: 1rem;
 		font-weight: 500;
 		margin-bottom: 1rem;
 	}
@@ -299,8 +299,8 @@
 	}
 
 	.open-modal-button {
-		background: #fff;
-		border: 1.5px solid #ff6e72;
+		background: #fdfdf5;
+		border: 1.5px solid #ff6666;
 		border-radius: 50px;
 		padding: .5rem 2rem;
 		cursor: pointer;
@@ -443,8 +443,8 @@
 	.submit-button {
 		width: 100%;
 		padding: 1rem;
-		background-color: #d4b896;
-		color: white;
+		background-color: #ffc2e5;
+		color: #fff;
 		border: none;
 		border-radius: 4px;
 		font-size: 1rem;
@@ -453,14 +453,16 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		transition: all 0.2s ease;
 	}
 
 	.submit-button:hover:not([disabled]) {
-		background-color: #c4a886;
+		transition: all 0.2s ease;
+		background-color: #f9d3e9;
 	}
 
 	.submit-button[disabled] {
-		background-color: #e5d5c0;
+		background-color: #faeef5;
 		cursor: not-allowed;
 	}
 

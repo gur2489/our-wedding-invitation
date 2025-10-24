@@ -85,7 +85,14 @@
 		const personName = getPersonName(person);
 		if (!personName || personName.trim() === '') return null;
 		const copyText = `${accountInfo.bank} ${accountInfo.number} ${accountInfo.holder}`;
-		return { title, bank: accountInfo.bank, numberAndHolder: `${accountInfo.number} ${accountInfo.holder}`, person, copyText };
+		return {
+			title,
+			bank: accountInfo.bank,
+			number: accountInfo.number,     // 계좌번호
+			holder: accountInfo.holder,     // 예금주
+			person,
+			copyText
+		};
 	};
 </script>
 
@@ -116,7 +123,7 @@
 
 {#if $showModal}
 	<div class="modal-overlay" on:click={closeModal}>
-		<div class="modal-content" on:click|stopPropagation>
+		<div class="modal-content {$modalSide}" on:click|stopPropagation>
 			<button class="modal-close" on:click={closeModal}>×</button>
 			
 			<h3 class="modal-title">{$modalSide === 'groom' ? '신랑' : '신부'} 측 계좌번호</h3>
@@ -133,10 +140,11 @@
 								<div class="account-row-title">{row.title}</div>
 								<div class="account-row-info">
 									<div class="account-bank">{row.bank}</div>
-									<div class="account-number">{row.numberAndHolder}</div>
+									<div class="account-number">{row.number}</div>
+									<div class="account-holder">{row.holder}</div>
 								</div>
 								<button class="copy-button" on:click={() => copyToClipboard(row.copyText, row.person)}>
-									{#if $copyStatus[row.person]}복사 완료{:else}복사{/if}
+									{#if $copyStatus[row.person]}복사완료{:else}복사{/if}
 								</button>
 							</div>
 						{/if}
@@ -152,10 +160,11 @@
 								<div class="account-row-title">{row.title}</div>
 								<div class="account-row-info">
 									<div class="account-bank">{row.bank}</div>
-									<div class="account-number">{row.numberAndHolder}</div>
+									<div class="account-number">{row.number}</div>
+									<div class="account-holder">{row.holder}</div>
 								</div>
 								<button class="copy-button" on:click={() => copyToClipboard(row.copyText, row.person)}>
-									{#if $copyStatus[row.person]}복사 완료{:else}복사{/if}
+									{#if $copyStatus[row.person]}복사완료{:else}복사{/if}
 								</button>
 							</div>
 						{/if}
@@ -179,7 +188,7 @@
 
 .section-title {
 	font-weight: 500;
-	font-size: 1rem;
+	font-size: 0.9rem;
 	margin-bottom: 1rem;
 	line-height: 1.6;
 }
@@ -194,8 +203,8 @@
 }
 
 .account-card {
-	background: white;
-	border: 1.5px solid #ff6e72;
+	background: #fdfdf5;
+	border: 1.5px solid #ff6666;
 	border-radius: 50px;
 	padding: 0.5rem 2rem;
 	cursor: pointer;
@@ -312,7 +321,6 @@
 .account-row-title {
 	font-weight: 500;
 	font-size: 0.95rem;
-	color: #c4a986;
 	min-width: 70px;
 	text-align: left;
 }
@@ -338,19 +346,46 @@
 	word-break: break-all;
 }
 
+.account-holder {
+	font-weight: 500;
+	font-size: 0.8rem;
+	color: #3e3e3e;
+	word-break: break-all;
+}
+
 .copy-button {
 	background: transparent;
-	border: 1px solid #c4a986;
-	color: #c4a986;
+	border: 1px solid;
 	padding: 0.4rem 0.8rem;
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 0.85rem;
 	white-space: nowrap;
+	transition: all 0.2s ease;
 }
 
-.copy-button:hover {
-	background: #c4a986;
+.modal-content.groom .copy-button {
+	border-color: #5FBDFF;
+	color: #5FBDFF;
+}
+.modal-content.groom .copy-button:hover {
+	background: #5FBDFF;
 	color: white;
+}
+.modal-content.groom .account-row-title {
+	color: #5FBDFF;
+}
+
+
+.modal-content.bride .copy-button {
+	border-color: #ff6666;
+	color: #ff6666;
+}
+.modal-content.bride .copy-button:hover {
+	background: #ff6666;
+	color: white;
+}
+.modal-content.bride .account-row-title {
+	color: #ff6666;
 }
 </style>

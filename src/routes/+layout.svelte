@@ -29,8 +29,8 @@
 		rel="stylesheet"
 		href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
 	/>
-	<meta property="og:title" content="Jaehyuk & Seungyeon's Wedding" />
-	<meta property="og:description" content="Please join us on our most special day!" />
+	<meta property="og:title" content="재혁 승연의 모바일 청첩장" />
+	<meta property="og:description" content="우리의 특별한 날을 함께해 주세요." />
 	<meta property="og:image" content="https://our-wedding-invitation-ee0.pages.dev/_app/immutable/assets/gallery2.i0KkDjIH.jpg" />
 	<meta property="og:url" content="https://our-wedding-invitation-ee0.pages.dev/" />
 	<meta property="og:type" content="website" />

@@ -138,7 +138,7 @@
 	.couple-section {
 		max-width: 600px;
 		margin: 0 auto;
-		padding: 60px 0 10px;
+		padding: 40px 0 10px;
 	}
 
 	@font-face {
@@ -150,7 +150,7 @@
 
 	.welcome-text {
 		font-family: 'AstonScript', cursive;
-		font-size: 28px;
+		font-size: 1rem;
 		text-align: center;
 		margin-bottom: 30px;
 		color: #333;
@@ -169,7 +169,7 @@
 	}
 
 	.name {
-		font-size: 24px;
+		font-size: 1rem;
 		font-weight: 600;
 		margin-bottom: 5px;
 		color: #333;
@@ -177,14 +177,14 @@
 	}
 
 	.parents {
-		font-size: 14px;
+		font-size: .7rem;
 		color: #666;
 		line-height: 1.6;
 	}
 
 	.heart-divider {
 		flex-shrink: 0;
-		font-size: 32px;
+		font-size: 1rem;
 		color: #e74c3c;
 		animation: heartbeat 1.5s ease-in-out infinite;
 	}

@@ -9,6 +9,14 @@
 	import photo9 from '$lib/assets/gallery/gallery8.jpg';
 	import photo10 from '$lib/assets/gallery/gallery9.jpg';
 	import photo11 from '$lib/assets/gallery/gallery10.jpg';
+	import photo12 from '$lib/assets/gallery/gallery11.jpg';
+	import photo13 from '$lib/assets/gallery/gallery12.jpg';
+	import photo14 from '$lib/assets/gallery/gallery13.jpg';
+	import photo15 from '$lib/assets/gallery/gallery14.jpg';
+	import photo16 from '$lib/assets/gallery/gallery15.jpg';
+	import photo17 from '$lib/assets/gallery/gallery16.jpg';
+	import photo18 from '$lib/assets/gallery/gallery17.jpg';
+	import photo19 from '$lib/assets/gallery/gallery18.jpg';
 
 	import PhotoSwipeLightBox from 'photoswipe/lightbox';
 	import PhotoSwipe from 'photoswipe';
@@ -17,6 +25,8 @@
 	import { localeStore } from '../i18n.svelte';
 	import { _ } from 'svelte-i18n';
 	import Camera from '$lib/assets/icons/camera.png';
+
+	let showAll = $state(false);
 
 	onMount(() => {
 		const lightbox = new PhotoSwipeLightBox({
@@ -27,6 +37,13 @@
 		});
 
 		lightbox.init();
+
+		// showAll 변경 시 lightbox 재초기화
+		$effect(() => {
+			if (showAll) {
+				lightbox.init();
+			}
+		});
 	});
 
 	const photos = [
@@ -79,16 +96,48 @@
 			src: photo11,
 			width: 1200,
 			height: 1790
+		},
+		{
+			src: photo18,
+			width: 2000,
+			height: 1333
+		},
+		{
+			src: photo13,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo14,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo15,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo17,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo19,
+			width: 1200,
+			height: 1790
 		}
 	];
+
+	const displayedPhotos = $derived(showAll ? photos : photos.slice(0, 6));
 </script>
 
 <section class="gallery">
 	<div class="header">
-		<img src={Camera} class="icon-img">
+		<img src={Camera} class="icon-img" alt="camera icon">
 	</div>
 	<div id="gallery">
-		{#each photos as photo}
+		{#each displayedPhotos as photo}
 			<a
 				href={photo.src}
 				class="slide"
@@ -100,6 +149,14 @@
 			</a>
 		{/each}
 	</div>
+	
+	{#if !showAll}
+		<div class="more-button-wrapper">
+			<button class="more-button" onclick={() => showAll = true}>
+				더보기
+			</button>
+		</div>
+	{/if}
 </section>
 
 <style lang="scss">
@@ -109,7 +166,6 @@
 		display: inline-block;
 		margin: 0rem 0 1rem;
 	}
-
 
 	section.gallery {
 		padding: 3em 2em 2em 2em;
@@ -167,7 +223,23 @@
 	.slide:nth-child(7),
 	.slide:nth-child(8),
 	.slide:nth-child(9),
-	.slide:nth-child(10) {
+	.slide:nth-child(10),
+	.slide:nth-child(12),
+	.slide:nth-child(15) {
 		grid-row: span 2;
+	}
+
+	.more-button-wrapper {
+		text-align: center;
+		margin-top: 2em;
+	}
+
+	.more-button {
+		background: #fdfdf5;
+		border: 1.5px solid #ff6666;
+		border-radius: 50px;
+		padding: .5rem 2rem;
+		cursor: pointer;
+		transition: all .2s ease;
 	}
 </style>
