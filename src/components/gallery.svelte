@@ -1,6 +1,5 @@
 <script lang="ts">
 	import photo2 from '$lib/assets/gallery/gallery1.jpg';
-	import photo3 from '$lib/assets/gallery/gallery2.jpg';
 	import photo4 from '$lib/assets/gallery/gallery3.jpg';
 	import photo5 from '$lib/assets/gallery/gallery4.jpg';
 	import photo6 from '$lib/assets/gallery/gallery5.jpg';
@@ -28,25 +27,62 @@
 
 	let showAll = $state(false);
 
-	onMount(() => {
-		const lightbox = new PhotoSwipeLightBox({
-			gallery: '#gallery',
-			children: 'a',
-			showHideAnimationType: 'fade',
-			pswpModule: PhotoSwipe
-		});
-
-		lightbox.init();
-
-		// showAll 변경 시 lightbox 재초기화
-		$effect(() => {
-			if (showAll) {
-				lightbox.init();
-			}
-		});
-	});
-
 	const photos = [
+		{
+			src: photo18,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo11,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo15,
+			width: 2000,
+			height: 1333
+		},
+		{
+			src: photo13,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo14,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo16,
+			width: 2259,
+			height: 3456
+		},
+		{
+			src: photo9,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo17,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo19,
+			width: 1200,
+			height: 1790
+		},
+		{
+			src: photo7,
+			width: 1200,
+			height: 1800
+		},
+		{
+			src: photo8,
+			width: 1200,
+			height: 1800
+		},
 		{
 			src: photo10,
 			width: 1200,
@@ -54,11 +90,6 @@
 		},
 		{
 			src: photo2,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo3,
 			width: 1200,
 			height: 1800
 		},
@@ -76,60 +107,29 @@
 			src: photo6,
 			width: 2000,
 			height: 1333
-		},
-		{
-			src: photo7,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo8,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo9,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo11,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo18,
-			width: 2000,
-			height: 1333
-		},
-		{
-			src: photo13,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo14,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo15,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo17,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo19,
-			width: 1200,
-			height: 1790
 		}
 	];
 
-	const displayedPhotos = $derived(showAll ? photos : photos.slice(0, 6));
+	onMount(() => {
+		const lightbox = new PhotoSwipeLightBox({
+			gallery: '#gallery',
+			children: 'a',
+			showHideAnimationType: 'fade',
+			pswpModule: PhotoSwipe
+		});
+
+		lightbox.init();
+
+		// showAll 변경 시 재초기화는 보통 필요 없지만,
+		// (숨김/표시만 바뀌므로) 안전을 위해 재초기화하려면 아래처럼 가능
+		$effect(() => {
+			// showAll이 바뀔 때 기존 인스턴스 재초기화 (선택적)
+			lightbox.destroy();
+			lightbox.init();
+		});
+		});
+
+	const displayedPhotos = $derived(showAll ? photos : photos.slice(0, 10));
 </script>
 
 <section class="gallery">
@@ -137,18 +137,23 @@
 		<img src={Camera} class="icon-img" alt="camera icon">
 	</div>
 	<div id="gallery">
-		{#each displayedPhotos as photo}
+		{#each photos as photo, idx}
 			<a
-				href={photo.src}
-				class="slide"
-				data-pswp-width={photo.width}
-				data-pswp-height={photo.height}
-				target="_blank"
+			href={photo.src}
+			class="slide"
+			data-pswp-width={photo.width}
+			data-pswp-height={photo.height}
+			target="_blank"
+			style={idx >= 10 && !showAll ? 'display:none' : ''}
 			>
+			{#if idx < 10 || showAll}
+				<!-- 썸네일 이미지는 처음엔 10장만 보이고,
+					showAll이 true면 숨겨둔 것들도 보이게 함 -->
 				<img class="thumbnail" src={photo.src} alt="" />
+			{/if}
 			</a>
 		{/each}
-	</div>
+		</div>
 	
 	{#if !showAll}
 		<div class="more-button-wrapper">
@@ -216,16 +221,8 @@
 		object-fit: cover;
 	}
 
-	.slide:nth-child(1),
-	.slide:nth-child(2),
-	.slide:nth-child(3),
-	.slide:nth-child(5),
-	.slide:nth-child(7),
-	.slide:nth-child(8),
-	.slide:nth-child(9),
-	.slide:nth-child(10),
-	.slide:nth-child(12),
-	.slide:nth-child(15) {
+
+	.slide {
 		grid-row: span 2;
 	}
 

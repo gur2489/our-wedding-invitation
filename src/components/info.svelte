@@ -1,5 +1,5 @@
 <script lang="ts">
-    import letterBottom from '$lib/assets/info.png';
+    import letterBottom from '$lib/assets/info.jpg';
 </script>
 <section class="info">
     <div class="img-wrapper">

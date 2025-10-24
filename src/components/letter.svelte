@@ -50,6 +50,7 @@
 
 	section.letter {
 		padding: 4.5em 3.5em 3em 3.5em;
+		background-color: #fff;
 	}
 
 	.header {

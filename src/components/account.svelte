@@ -178,7 +178,8 @@
 <style>
 .account-section.white { background-color: white; }
 .account-section.beige { background-color: #F8F6F2; }
-.account-section { padding: 0rem 1.5rem 4rem; text-align: center; }
+.account-section { padding: 0rem 1.5rem 4rem; text-align: center;max-width: 600px;
+    margin: auto; }
 
 .icon-img{
 	width:50px;

@@ -129,7 +129,7 @@
 					<div class="button-group">
 						<button
 							type="button"
-							class="option-button"
+							class="option-button l"
 							class:active={rsvp === 'yes'}
 							onclick={() => selectRsvp('yes')}
 						>
@@ -137,7 +137,7 @@
 						</button>
 						<button
 							type="button"
-							class="option-button"
+							class="option-button r"
 							class:active={rsvp === 'no'}
 							onclick={() => selectRsvp('no')}
 						>
@@ -271,6 +271,7 @@
 	section.rsvp {
 		padding: 0rem 1.5rem 3rem;
 		text-align: center;
+		background-color: #fff;
 	}
 
 	.header {
@@ -401,8 +402,9 @@
 
 	.form-input:focus {
 		outline: none;
-		border-color: #b8a789;
+		border-color: #999;
 		background: white;
+		transition: all 0.2s ease;
 	}
 
 	.form-input::placeholder {
@@ -431,9 +433,21 @@
 	}
 
 	.option-button.active {
+		background: #9B9B9B;
+		color: white;
+		border-color: #9B9B9B;
+	}
+
+	.option-button.l.active {
 		background: #8fa9d4;
 		color: white;
 		border-color: #8fa9d4;
+	}
+
+	.option-button.r.active {
+		background: #ffc2e5;
+		color: white;
+		border-color: #ffc2e5;
 	}
 
 	.option-button:hover:not(.active) {
