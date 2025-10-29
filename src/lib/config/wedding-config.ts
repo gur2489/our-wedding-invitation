@@ -35,13 +35,12 @@ export const weddingConfig = {
     bride: { name: "신부이름", label: "딸", father: "신부아버지", mother: "신부어머니" },
   },
   account: {
-    groom: { bank: "은행명", number: "123-456-789012", holder: "임재혁" },
+    groom: { bank: "카카오뱅크", number: "3333-12-2287600", holder: "임재혁" },
     bride: { bank: "신한은행", number: "110-400-897640", holder: "서승연" },
-    groomFather: { bank: "은행명", number: "111-222-333444", holder: "임원섭" },
-    groomMother: { bank: "은행명", number: "555-666-777888", holder: "윤지영" },
+    groomFather: { bank: "-", number: "-", holder: "임원섭" },
+    groomMother: { bank: "경남은행", number: "207-0033-1312-08", holder: "윤지영" },
     brideFather: { bank: "우리은행", number: "115-154432-02-201", holder: "서홍교" },
     brideMother: { bank: "우리은행", number: "247-184597-02-001", holder: "신영채" },
   },
   rsvp: { enabled: false, showMealOption: false },
-  slack: { webhookUrl: process.env.NEXT_PUBLIC_SLACK_WEBHOOK_URL || "", channel: "#wedding-response", compactMessage: true },
 };
