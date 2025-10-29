@@ -25,136 +25,84 @@
 	import Camera from '$lib/assets/icons/camera.png';
 
 	let showAll = $state(false);
+	let photos = $state<Array<{ src: string; width: number; height: number }>>([]);
 
-	const photos = [
-	{
-		src: photo18,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo11,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo15,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo4,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo10,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo16,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo5,
-		width: 1440,
-		height: 960
-	},
-	{
-		src: photo17,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo19,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo7,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo8,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo14,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo2,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo13,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo9,
-		width: 1080,
-		height: 1440
-	},
-	{
-		src: photo6,
-		width: 1440,
-		height: 960
+	const photoSources = [
+		photo18, photo11, photo15, photo13, photo4, photo16,
+		photo9, photo17, photo19, photo2, photo8, photo10,
+		photo7, photo14, photo5, photo6
+	];
+
+	// 이미지의 원본 크기를 자동으로 감지
+	async function loadPhotoDimensions() {
+		const loadedPhotos = await Promise.all(
+			photoSources.map((src) => {
+				return new Promise<{ src: string; width: number; height: number }>((resolve) => {
+					const img = new Image();
+					img.onload = () => {
+						resolve({
+							src,
+							width: img.naturalWidth,
+							height: img.naturalHeight
+						});
+					};
+					img.onerror = () => {
+						// 오류 시 기본값 설정
+						resolve({
+							src,
+							width: 1080,
+							height: 1440
+						});
+					};
+					img.src = src;
+				});
+			})
+		);
+		photos = loadedPhotos;
 	}
-];
 
 	onMount(() => {
-		const lightbox = new PhotoSwipeLightBox({
-			gallery: '#gallery',
-			children: 'a',
-			showHideAnimationType: 'fade',
-			pswpModule: PhotoSwipe
-		});
+		// 이미지 크기 로드 후 PhotoSwipe 초기화
+		loadPhotoDimensions().then(() => {
+			const lightbox = new PhotoSwipeLightBox({
+				gallery: '#gallery',
+				children: 'a',
+				showHideAnimationType: 'fade',
+				pswpModule: PhotoSwipe
+			});
 
-		lightbox.init();
-
-		// showAll 변경 시 재초기화는 보통 필요 없지만,
-		// (숨김/표시만 바뀌므로) 안전을 위해 재초기화하려면 아래처럼 가능
-		$effect(() => {
-			// showAll이 바뀔 때 기존 인스턴스 재초기화 (선택적)
-			lightbox.destroy();
 			lightbox.init();
-		});
-		});
 
-	const displayedPhotos = $derived(showAll ? photos : photos.slice(0, 10));
+			return () => {
+				lightbox.destroy();
+			};
+		});
+	});
 </script>
 
 <section class="gallery">
 	<div class="header">
-		<img src={Camera} class="icon-img" alt="camera icon">
+		<img src={Camera} class="icon-img" alt="camera icon" />
 	</div>
 	<div id="gallery">
-		{#each photos as photo, idx}
+		{#each photos as photo, idx (photo.src)}
 			<a
-			href={photo.src}
-			class="slide"
-			data-pswp-width={photo.width}
-			data-pswp-height={photo.height}
-			target="_blank"
-			style={idx >= 10 && !showAll ? 'display:none' : ''}
+				href={photo.src}
+				class="slide"
+				data-pswp-width={photo.width}
+				data-pswp-height={photo.height}
+				style={idx >= 10 && !showAll ? 'display:none' : ''}
 			>
-			{#if idx < 10 || showAll}
-				<img class="thumbnail" src={photo.src} alt="" />
-			{/if}
+				{#if idx < 10 || showAll}
+					<img class="thumbnail" src={photo.src} alt="" />
+				{/if}
 			</a>
 		{/each}
 	</div>
-	
+
 	{#if !showAll}
 		<div class="more-button-wrapper">
-			<button class="more-button" onclick={() => showAll = true}>
+			<button class="more-button" onclick={() => (showAll = true)}>
 				더보기
 			</button>
 		</div>
@@ -162,9 +110,8 @@
 </section>
 
 <style lang="scss">
-
-	.icon-img{
-		width:50px;
+	.icon-img {
+		width: 50px;
 		display: inline-block;
 		margin: 0rem 0 1rem;
 	}
@@ -218,7 +165,6 @@
 		object-fit: cover;
 	}
 
-
 	.slide {
 		grid-row: span 2;
 	}
@@ -232,8 +178,8 @@
 		background: #fdfdf5;
 		border: 1.5px solid #ff6666;
 		border-radius: 50px;
-		padding: .5rem 2rem;
+		padding: 0.5rem 2rem;
 		cursor: pointer;
-		transition: all .2s ease;
+		transition: all 0.2s ease;
 	}
 </style>
