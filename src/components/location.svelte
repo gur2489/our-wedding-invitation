@@ -22,7 +22,7 @@
 
 	let mapContainer: HTMLDivElement;
 	const address = '서울특별시 강남구 학동로47길 5';
-	const placeName = '라온제나';
+	const placeName = '라온제나 강남';
 
 	let lat: number;
 	let lng: number;
@@ -68,39 +68,56 @@
 		const map = new naver.Map(mapContainer, {
 			center: location,
 			zoom: 17,
-			mapTypeControl: true
+			mapTypeControl: true,
 		});
 
 		const marker = new naver.Marker({
 			position: location,
 			map,
-			title: placeName
+			title: placeName,
 		});
 
+		// ✅ 네이버지도 링크 URL
+		const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName + ' ' + address)}`;
+
+		// ✅ 예쁜 스타일의 말풍선
 		const infoWindow = new naver.InfoWindow({
 			content: `
-				<div style="padding: 10px; min-width: 200px;">
-					<h4>${placeName}</h4>
-					<p>${address}</p>
+				<div 
+					style="
+						padding: 12px 14px;
+						min-width: 230px;
+						border-radius: 10px;
+						box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+						background-color: #fff;
+						cursor: pointer;
+						border: 1px solid #e5e7eb;
+						font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+					"
+					onclick="window.open('${naverMapUrl}', '_blank')"
+				>
+					<h4 style="margin: 0; font-size: 15px; color: #111; font-weight: 600;">${placeName}</h4>
+					<p style="margin: 6px 0 0; font-size: 13px; color: #555;">${address}</p>
+					<p style="margin: 6px 0 0; font-size: 12px; color: #1ec800; font-weight: 500;">▶ 네이버지도에서 보기</p>
 				</div>
-			`
+			`,
 		});
 
+		// 마커 클릭 시 말풍선 열기
 		naver.Event.addListener(marker, "click", () => {
 			infoWindow.open(map, marker);
 		});
+
+		// 초기에도 열린 상태로 표시
+		infoWindow.open(map, marker);
 	}
+
 
 	function copyAddress() {
 		navigator.clipboard
 			.writeText(address)
 			.then(() => alert($_('location.address_copied')))
 			.catch(() => null);
-	}
-
-	function openNaverMap() {
-		const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(address)}`;
-		window.open(naverMapUrl, '_blank');
 	}
 
 	async function shareLocation() {
@@ -122,32 +139,114 @@
 	}
 
 	function openNaverMapApp() {
-		const appUrl = `nmap://search?query=${encodeURIComponent(placeName)}&appname=myweb.page`;
-		const webUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName)}`;
+		const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		if (!isMobile) {
+			// PC에서는 네이버 지도 웹사이트로 이동
+			const webUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName + ' ' + address)}`;
+			window.open(webUrl, '_blank');
+			return;
+		}
+
+		const appUrl = `nmap://search?query=${encodeURIComponent(placeName + ' ' + address)}&appname=myweb.page`;
+		const iosStoreUrl = 'https://apps.apple.com/app/id311867728';
+		const androidStoreUrl = 'https://play.google.com/store/apps/details?id=com.nhn.android.nmap';
+
+		const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+		const storeUrl = isIOS ? iosStoreUrl : androidStoreUrl;
+
+		// 페이지가 백그라운드로 갔는지 확인
+		let appOpened = false;
+
+		const visibilityChange = () => {
+			if (document.hidden) {
+				appOpened = true;
+			}
+		};
+
+		document.addEventListener('visibilitychange', visibilityChange);
+
+		// 앱 열기 시도
 		window.location.href = appUrl;
-		setTimeout(() => (window.location.href = webUrl), 1000);
+
+		// 2.5초 후에 앱이 열리지 않았으면 스토어로 이동
+		setTimeout(() => {
+		document.removeEventListener('visibilitychange', visibilityChange);
+			if (!appOpened && !document.hidden) {
+				window.location.href = storeUrl;
+			}
+		}, 3000);
 	}
 
 	function openTmap() {
-		if (!lat || !lng) {
-			alert('지도가 아직 로드되지 않았습니다.');
+		const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		if (!isMobile) {
+			alert('티맵은 모바일 앱 전용 서비스입니다.\n모바일 기기에서 이용해주세요.');
 			return;
 		}
-		const appUrl = `tmap://search?name=${encodeURIComponent(placeName)}&lon=${lng}&lat=${lat}`;
-		const storeUrl = 'https://play.google.com/store/apps/details?id=com.skt.tmap.ku';
+
+		const appUrl = `tmap://search?name=${encodeURIComponent(placeName)}`;
+		const iosStoreUrl = 'https://apps.apple.com/app/id431589174';
+		const androidStoreUrl = 'https://play.google.com/store/apps/details?id=com.skt.tmap.ku';
+
+		const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+		const storeUrl = isIOS ? iosStoreUrl : androidStoreUrl;
+
+		let appOpened = false;
+
+		const visibilityChange = () => {
+			if (document.hidden) {
+				appOpened = true;
+			}
+		};
+
+		document.addEventListener('visibilitychange', visibilityChange);
 		window.location.href = appUrl;
-		setTimeout(() => (window.location.href = storeUrl), 1000);
+
+		setTimeout(() => {
+		document.removeEventListener('visibilitychange', visibilityChange);
+			if (!appOpened && !document.hidden) {
+				window.location.href = storeUrl;
+			}
+		}, 3000);
 	}
 
 	function openKakaoNavi() {
-		if (!lat || !lng) {
-			alert('지도가 아직 로드되지 않았습니다.');
+		const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		if (!isMobile) {
+			// PC에서는 카카오맵 웹사이트로 이동
+			const webUrl = `https://map.kakao.com/link/search/${encodeURIComponent(placeName)}`;
+			window.open(webUrl, '_blank');
 			return;
 		}
-		const appUrl = `kakaonavi://navigate?name=${encodeURIComponent(placeName)}&x=${lng}&y=${lat}&coord_type=wgs84`;
-		const storeUrl = 'https://play.google.com/store/apps/details?id=com.locnall.KimGiSa';
+		// 좌표를 알고 있는 경우
+		//const appUrl = `kakaomap://look?p=${lat},${lng}`;
+
+		// 또는 장소명으로 검색
+		const appUrl = `kakaomap://search?q=${encodeURIComponent(placeName)}`;
+
+		const iosStoreUrl = 'https://apps.apple.com/app/id304608425'; // 카카오맵
+		const androidStoreUrl = 'https://play.google.com/store/apps/details?id=net.daum.android.map';
+
+		const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+		const storeUrl = isIOS ? iosStoreUrl : androidStoreUrl;
+
+		let appOpened = false;
+
+		const visibilityChange = () => {
+			if (document.hidden) {
+				appOpened = true;
+			}
+		};
+
+		document.addEventListener('visibilitychange', visibilityChange);
 		window.location.href = appUrl;
-		setTimeout(() => (window.location.href = storeUrl), 1000);
+
+		setTimeout(() => {
+		document.removeEventListener('visibilitychange', visibilityChange);
+			if (!appOpened && !document.hidden) {
+				window.location.href = storeUrl;
+			}
+		}, 3000);
 	}
 </script>
 
@@ -163,9 +262,6 @@
 
 	<div class="map">
 		<div bind:this={mapContainer} class="naver-map"></div>
-		<button class="map-link-button" on:click={openNaverMap}>
-			네이버지도에서 보기
-		</button>
 	</div>
 
 	<div class="map-app-buttons">

@@ -21,94 +21,93 @@
 	import PhotoSwipe from 'photoswipe';
 	import 'photoswipe/style.css';
 	import { onMount } from 'svelte';
-	import { localeStore } from '../i18n.svelte';
 	import { _ } from 'svelte-i18n';
 	import Camera from '$lib/assets/icons/camera.png';
 
 	let showAll = $state(false);
 
 	const photos = [
-		{
-			src: photo18,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo11,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo15,
-			width: 2000,
-			height: 1333
-		},
-		{
-			src: photo13,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo14,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo16,
-			width: 2259,
-			height: 3456
-		},
-		{
-			src: photo9,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo17,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo19,
-			width: 1200,
-			height: 1790
-		},
-		{
-			src: photo7,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo8,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo10,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo2,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo4,
-			width: 2000,
-			height: 1333
-		},
-		{
-			src: photo5,
-			width: 1200,
-			height: 1800
-		},
-		{
-			src: photo6,
-			width: 2000,
-			height: 1333
-		}
-	];
+	{
+		src: photo18,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo11,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo15,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo4,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo10,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo16,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo5,
+		width: 1440,
+		height: 960
+	},
+	{
+		src: photo17,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo19,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo7,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo8,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo14,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo2,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo13,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo9,
+		width: 1080,
+		height: 1440
+	},
+	{
+		src: photo6,
+		width: 1440,
+		height: 960
+	}
+];
 
 	onMount(() => {
 		const lightbox = new PhotoSwipeLightBox({
@@ -147,13 +146,11 @@
 			style={idx >= 10 && !showAll ? 'display:none' : ''}
 			>
 			{#if idx < 10 || showAll}
-				<!-- 썸네일 이미지는 처음엔 10장만 보이고,
-					showAll이 true면 숨겨둔 것들도 보이게 함 -->
 				<img class="thumbnail" src={photo.src} alt="" />
 			{/if}
 			</a>
 		{/each}
-		</div>
+	</div>
 	
 	{#if !showAll}
 		<div class="more-button-wrapper">
