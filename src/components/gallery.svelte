@@ -155,14 +155,13 @@
 		display: grid;
 		gap: 1em;
 		grid-template-columns: repeat(2, 1fr);
-		grid-auto-rows: 6.5em;
+		
 	}
 
 	img.thumbnail {
 		border-radius: 4px;
 		width: 100%;
-		height: 100%;
-		object-fit: cover;
+		aspect-ratio: 3 / 4;
 	}
 
 	.slide {

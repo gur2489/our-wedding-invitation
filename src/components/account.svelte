@@ -132,7 +132,7 @@
 				{#if $modalSide === 'groom'}
 					{#each [
 						renderAccountRow(weddingConfig.account.groom, 'groom', '신랑'),
-						//renderAccountRow(weddingConfig.account.groomFather, 'groomFather', '아버지'),
+						renderAccountRow(weddingConfig.account.groomFather, 'groomFather', '형'),
 						renderAccountRow(weddingConfig.account.groomMother, 'groomMother', '어머니')
 					] as row (row?.person)}
 						{#if row}
