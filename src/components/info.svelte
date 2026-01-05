@@ -1,5 +1,5 @@
 <script lang="ts">
-    import letterBottom_pc from '$lib/assets/info.png';
+    import letterBottom_pc from '$lib/assets/info.jpg';
     import letterBottom_mo from '$lib/assets/info.jpg';
 </script>
 
