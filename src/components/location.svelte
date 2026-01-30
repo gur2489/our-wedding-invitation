@@ -45,7 +45,7 @@
 	// 서버 API 호출 → 좌표 변환
 	async function getCoordinates() {
 		const response = await fetch(`/api/geocode?query=${encodeURIComponent(address)}`);
-		const data = await response.json();
+		const data = await response.json() as { addresses?: Array<{ x: string; y: string }> };
 
 		if (data.addresses && data.addresses.length > 0) {
 			return {
